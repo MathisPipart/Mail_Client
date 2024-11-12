@@ -1,16 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.mail_client.HelloController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
+<VBox alignment="CENTER" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mail_client.HelloController">
+   <VBox fillWidth="false">
+      <children>
+         <HBox alignment="CENTER" prefHeight="26.0" prefWidth="1000.0">
+            <children>
+               <Label alignment="CENTER" prefHeight="26.0" prefWidth="212.0" text="mathis.pipart@edu.unito.it">
+                  <HBox.margin>
+                     <Insets left="340.0" />
+                  </HBox.margin>
+                  <font>
+                     <Font name="System Bold" size="14.0" />
+                  </font>
+               </Label>
+               <Button alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onHelloButtonClick" prefHeight="25.0" prefWidth="81.0" text="New Mail">
+                  <HBox.margin>
+                     <Insets left="320.0" />
+                  </HBox.margin>
+               </Button>
+            </children>
+            <VBox.margin>
+               <Insets left="10.0" right="10.0" top="10.0" />
+            </VBox.margin>
+         </HBox>
+      
+                                              <Label fx:id="welcomeText" />
+      </children>
+   </VBox>
+   <BorderPane prefHeight="800.0">
+      <left>
+         <TableView prefHeight="747.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+           <columns>
+             <TableColumn prefWidth="400.0" text="Your mails" />
+           </columns>
+         </TableView>
+      </left>
+      <center>
+         <TitledPane prefHeight="748.0" prefWidth="497.0" text="Info on Prog3 Course" BorderPane.alignment="TOP_CENTER">
+            <content>
+               <GridPane>
+                 <columnConstraints>
+                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                 </columnConstraints>
+                 <rowConstraints>
+                   <RowConstraints maxHeight="244.33333672417535" minHeight="0.0" prefHeight="52.44447114732531" vgrow="SOMETIMES" />
+                   <RowConstraints maxHeight="657.5555390252007" minHeight="10.0" prefHeight="648.2221955193413" vgrow="SOMETIMES" />
+                 </rowConstraints>
+                  <children>
+                     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="24.0" GridPane.columnIndex="1">
+                        <children>
+                           <Button mnemonicParsing="false" text="Reply" />
+                           <Button mnemonicParsing="false" text="Reply All" />
+                           <Button mnemonicParsing="false" text="Forward" />
+                           <Button mnemonicParsing="false" text="Delete" />
+                        </children>
+                     </HBox>
+                     <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                        <children>
+                           <Label text="From :">
+                              <font>
+                                 <Font name="System Bold" size="12.0" />
+                              </font>
+                           </Label>
+                           <Label text="mathis.pipart@gmail.com" />
+                        </children>
+                     </HBox>
+                  </children>
+               </GridPane>
+            </content>
+         </TitledPane>
+      </center></BorderPane>
 </VBox>
