@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mail_client.HelloController">
+<VBox alignment="CENTER" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mail_client.controller.HelloController">
    <VBox fillWidth="false">
       <children>
          <HBox alignment="CENTER" prefHeight="26.0" prefWidth="1000.0">
@@ -38,14 +38,14 @@
             </VBox.margin>
          </HBox>
       
-                                              <Label fx:id="welcomeText" />
+         <Label fx:id="welcomeText" />
       </children>
    </VBox>
    <BorderPane prefHeight="800.0">
       <left>
-         <TableView prefHeight="747.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+         <TableView fx:id="emailTable" prefHeight="747.0" prefWidth="400.0" BorderPane.alignment="CENTER" >
            <columns>
-             <TableColumn prefWidth="400.0" text="Your mails" />
+             <TableColumn fx:id="emailColumn" prefWidth="398.0" text="Your mails" />
            </columns>
          </TableView>
       </left>
