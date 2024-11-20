@@ -43,14 +43,14 @@
    </VBox>
    <BorderPane prefHeight="800.0">
       <left>
-         <TableView fx:id="emailTable" prefHeight="747.0" prefWidth="400.0" BorderPane.alignment="CENTER" >
+         <TableView fx:id="emailTable" prefHeight="747.0" prefWidth="400.0" BorderPane.alignment="CENTER">
            <columns>
-             <TableColumn fx:id="emailColumn" prefWidth="398.0" text="Your mails" />
+             <TableColumn fx:id="emailColumn" maxWidth="400.0" prefWidth="400.0" resizable="false" text="Your mails" />
            </columns>
          </TableView>
       </left>
       <center>
-         <TitledPane prefHeight="748.0" prefWidth="497.0" text="Info on Prog3 Course" BorderPane.alignment="TOP_CENTER">
+         <TitledPane prefHeight="748.0" prefWidth="497.0" text="My mail" BorderPane.alignment="TOP_CENTER">
             <content>
                <GridPane>
                  <columnConstraints>
@@ -58,28 +58,74 @@
                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                  </columnConstraints>
                  <rowConstraints>
-                   <RowConstraints maxHeight="244.33333672417535" minHeight="0.0" prefHeight="52.44447114732531" vgrow="SOMETIMES" />
-                   <RowConstraints maxHeight="657.5555390252007" minHeight="10.0" prefHeight="648.2221955193413" vgrow="SOMETIMES" />
+                   <RowConstraints maxHeight="244.33333672417535" minHeight="0.0" prefHeight="70.66667132907443" vgrow="NEVER" />
+                   <RowConstraints maxHeight="657.5555390252007" minHeight="10.0" prefHeight="630.6666620042589" valignment="TOP" vgrow="SOMETIMES" />
                  </rowConstraints>
                   <children>
-                     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="24.0" GridPane.columnIndex="1">
+                     <VBox>
                         <children>
-                           <Button mnemonicParsing="false" text="Reply" />
-                           <Button mnemonicParsing="false" text="Reply All" />
-                           <Button mnemonicParsing="false" text="Forward" />
-                           <Button mnemonicParsing="false" text="Delete" />
+                           <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                              <children>
+                                 <Label text="From :">
+                                    <font>
+                                       <Font name="System Bold" size="12.0" />
+                                    </font>
+                                 </Label>
+                                 <Label fx:id="selectedSenderLabel" text="test@gmail.com" />
+                              </children>
+                           </HBox>
+                           <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                              <children>
+                                 <Label text="To :">
+                                    <font>
+                                       <Font name="System Bold" size="12.0" />
+                                    </font>
+                                    <HBox.margin>
+                                       <Insets bottom="10.0" />
+                                    </HBox.margin>
+                                 </Label>
+                                 <Label fx:id="selectedReceiverLabel" text="receiver@gmail.com">
+                                    <HBox.margin>
+                                       <Insets bottom="10.0" />
+                                    </HBox.margin>
+                                 </Label>
+                              </children>
+                           </HBox>
                         </children>
-                     </HBox>
-                     <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     </VBox>
+                     <VBox GridPane.columnIndex="1">
                         <children>
-                           <Label text="From :">
+                           <HBox alignment="CENTER" minWidth="289.33333333" prefHeight="100.0" prefWidth="200.0" spacing="24.0">
+                              <children>
+                                 <Button mnemonicParsing="false" text="Reply" />
+                                 <Button mnemonicParsing="false" text="Reply All" />
+                                 <Button mnemonicParsing="false" text="Forward" />
+                                 <Button mnemonicParsing="false" text="Delete" />
+                              </children>
+                           </HBox>
+                           <Label fx:id="selectedDateLabel" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="289.0" text="Date">
+                              <padding>
+                                 <Insets bottom="15.0" top="5.0" />
+                              </padding>
+                              <VBox.margin>
+                                 <Insets />
+                              </VBox.margin>
+                           </Label>
+                        </children>
+                     </VBox>
+                     <VBox GridPane.columnSpan="2" GridPane.rowIndex="1">
+                        <children>
+                           <Label fx:id="selectedSubjectLabel" alignment="TOP_LEFT" prefHeight="39.0" prefWidth="771.0" text="Subject">
                               <font>
                                  <Font name="System Bold" size="12.0" />
                               </font>
                            </Label>
-                           <Label text="mathis.pipart@gmail.com" />
+                           <Label fx:id="selectedContentLabel" alignment="TOP_LEFT" prefHeight="581.0" prefWidth="578.0" text="Content" />
                         </children>
-                     </HBox>
+                        <padding>
+                           <Insets top="10.0" />
+                        </padding>
+                     </VBox>
                   </children>
                </GridPane>
             </content>

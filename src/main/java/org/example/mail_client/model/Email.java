@@ -5,15 +5,15 @@ import java.time.LocalDateTime;
 public class Email {
     private String id;
     private String sender;
-    private String recipient;
+    private String receiver;
     private String subject;
     private String content;
     private LocalDateTime timestamp;
 
-    public Email(String id, String sender, String recipient, String subject, String content, LocalDateTime timestamp) {
+    public Email(String id, String sender, String receiver, String subject, String content, LocalDateTime timestamp) {
         this.id = id;
         this.sender = sender;
-        this.recipient = recipient;
+        this.receiver = receiver;
         this.subject = subject;
         this.content = content;
         this.timestamp = timestamp;
@@ -28,8 +28,8 @@ public class Email {
         return sender;
     }
 
-    public String getRecipient() {
-        return recipient;
+    public String getReceiver() {
+        return receiver;
     }
 
     public String getSubject() {
