@@ -14,12 +14,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mail_client.controller.HelloController">
+<VBox alignment="CENTER" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mail_client.controller.MailBoxController">
    <VBox fillWidth="false">
       <children>
          <HBox alignment="CENTER" prefHeight="26.0" prefWidth="1000.0">
             <children>
-               <Label alignment="CENTER" prefHeight="26.0" prefWidth="212.0" text="mathis.pipart@edu.unito.it">
+               <Label fx:id="mailName" alignment="CENTER" prefHeight="26.0" prefWidth="212.0">
                   <HBox.margin>
                      <Insets left="340.0" />
                   </HBox.margin>

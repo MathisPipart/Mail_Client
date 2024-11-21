@@ -9,7 +9,10 @@ import org.example.mail_client.model.Email;
 
 import java.time.LocalDateTime;
 
-public class HelloController {
+public class MailBoxController {
+
+    @FXML
+    private Label mailName;
     @FXML
     private Label welcomeText;
 
@@ -49,23 +52,18 @@ public class HelloController {
         welcomeText.setText("Welcome to JavaFX Application!");
     }
 
+    public void setReceivedMailText(String text) {
+        mailName.setText(text);
+    }
+
     private void listenerOnClickListMail(){
         emailTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                // Mettre à jour le label avec le sender de l'email sélectionné
-                selectedSenderLabel.setText(newSelection.getSender());
-                selectedReceiverLabel.setText(newSelection.getReceiver());
-                selectedSubjectLabel.setText(newSelection.getSubject());
-                selectedContentLabel.setText(newSelection.getContent());
-                selectedDateLabel.setText(newSelection.getTimestamp().toString());
-            } else {
-                // Réinitialiser si aucune sélection
-                selectedSenderLabel.setText("");
-                selectedReceiverLabel.setText("");
-                selectedSubjectLabel.setText("");
-                selectedContentLabel.setText("");
-                selectedDateLabel.setText("");
-            }
+            // Mettre à jour le label avec le sender de l'email sélectionné
+            selectedSenderLabel.setText(newSelection.getSender());
+            selectedReceiverLabel.setText(newSelection.getReceiver());
+            selectedSubjectLabel.setText(newSelection.getSubject());
+            selectedContentLabel.setText(newSelection.getContent());
+            selectedDateLabel.setText(newSelection.getTimestamp().toString());
         });
     }
 
