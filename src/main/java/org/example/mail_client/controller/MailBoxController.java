@@ -3,8 +3,14 @@ package org.example.mail_client.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
+import org.example.mail_client.MailApplication;
 import org.example.mail_client.model.Email;
 
 import java.time.LocalDateTime;
@@ -29,7 +35,7 @@ public class MailBoxController {
     @FXML
     private Label selectedSubjectLabel;
     @FXML
-    private Label selectedContentLabel;
+    private TextFlow selectedContentTextFlow;
     @FXML
     private Label selectedDateLabel;
 
@@ -48,6 +54,20 @@ public class MailBoxController {
     }
 
     @FXML
+    public void openNewMailStage() throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader(MailApplication.class.getResource("newMail-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 598, 488);
+
+        NewMailController controller = fxmlLoader.getController();
+        controller.setUserMail(mailName.getText());
+
+        Stage newMailStage = new Stage();
+        newMailStage.setTitle("New Mail");
+        newMailStage.setScene(scene);
+        newMailStage.show();
+    }
+
+    @FXML
     protected void onHelloButtonClick() {
         welcomeText.setText("Welcome to JavaFX Application!");
     }
@@ -62,8 +82,11 @@ public class MailBoxController {
             selectedSenderLabel.setText(newSelection.getSender());
             selectedReceiverLabel.setText(newSelection.getReceiver());
             selectedSubjectLabel.setText(newSelection.getSubject());
-            selectedContentLabel.setText(newSelection.getContent());
             selectedDateLabel.setText(newSelection.getTimestamp().toString());
+
+            selectedContentTextFlow.getChildren().clear();
+            Text contentText = new Text(newSelection.getContent());
+            selectedContentTextFlow.getChildren().add(contentText);
         });
     }
 
