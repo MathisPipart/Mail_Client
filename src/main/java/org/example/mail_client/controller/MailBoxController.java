@@ -12,15 +12,16 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.example.mail_client.MailApplication;
 import org.example.mail_client.model.Email;
+import org.example.mail_client.model.MailBox;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 public class MailBoxController {
 
     @FXML
     private Label mailName;
-    @FXML
-    private Label welcomeText;
 
     @FXML
     private TableView<Email> emailTable;
@@ -31,7 +32,7 @@ public class MailBoxController {
     @FXML
     private Label selectedSenderLabel;
     @FXML
-    private Label selectedReceiverLabel;
+    private TextFlow selectedReceiverTextFlow;
     @FXML
     private Label selectedSubjectLabel;
     @FXML
@@ -42,7 +43,7 @@ public class MailBoxController {
     @FXML
     private Button replyButton, replyAllButton, forwardButton, deleteButton;
 
-    private final ObservableList<Email> emailList = FXCollections.observableArrayList();
+    private final MailBox mailBox = new MailBox();
 
     @FXML
     public void initialize() {
@@ -50,7 +51,7 @@ public class MailBoxController {
         cellsInitialisation();
         addMail();
 
-        emailTable.setItems(emailList);
+        emailTable.setItems(mailBox.getEmails());
     }
 
     @FXML
@@ -67,11 +68,6 @@ public class MailBoxController {
         newMailStage.show();
     }
 
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
-    }
-
     public void setReceivedMailText(String text) {
         mailName.setText(text);
     }
@@ -80,7 +76,7 @@ public class MailBoxController {
         emailTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             // Mettre à jour le label avec le sender de l'email sélectionné
             selectedSenderLabel.setText(newSelection.getSender());
-            selectedReceiverLabel.setText(newSelection.getReceiver());
+            updateReceiverTextFlow(newSelection.getReceiver());
             selectedSubjectLabel.setText(newSelection.getSubject());
             selectedDateLabel.setText(newSelection.getTimestamp().toString());
 
@@ -88,6 +84,16 @@ public class MailBoxController {
             Text contentText = new Text(newSelection.getContent());
             selectedContentTextFlow.getChildren().add(contentText);
         });
+    }
+
+    @FXML
+    private void updateReceiverTextFlow(List<String> receivers) {
+        selectedReceiverTextFlow.getChildren().clear();
+
+        for (String receiver : receivers) {
+            Text textNode = new Text(receiver + "\n");
+            selectedReceiverTextFlow.getChildren().add(textNode);
+        }
     }
 
     private void cellsInitialisation(){
@@ -145,22 +151,20 @@ public class MailBoxController {
     }
 
     private void addMail(){
-        emailList.addAll(
-                new Email("1", "mathis.pipart@gmail.com", "example1@mail.com", "Sujet 1", "Contenu 1", LocalDateTime.now()),
-                new Email("2", "mathis.pipart@free.fr", "example2@mail.com", "Sujet 2", "Contenu 2", LocalDateTime.now()),
-                new Email("3", "paul.zerial@edu.esiee.fr", "example3@mail.com", "Sujet 3", "Contenu 3", LocalDateTime.now()),
-                new Email("4", "alice.durand@gmail.com", "example4@mail.com", "Sujet 4", "Contenu 4", LocalDateTime.now()),
-                new Email("5", "julien.martin@orange.fr", "example5@mail.com", "Sujet 5", "Contenu 5", LocalDateTime.now()),
-                new Email("6", "emma.lefevre@hotmail.com", "example6@mail.com", "Sujet 6", "Contenu 6", LocalDateTime.now()),
-                new Email("7", "lucas.bernard@edu.univ.fr", "example7@mail.com", "Sujet 7", "Contenu 7", LocalDateTime.now()),
-                new Email("8", "charlotte.dubois@gmail.com", "example8@mail.com", "Sujet 8", "Contenu 8", LocalDateTime.now()),
-                new Email("9", "nicolas.perrin@yahoo.fr", "example9@mail.com", "Sujet 9", "Contenu 9", LocalDateTime.now()),
-                new Email("10", "lea.moreau@laposte.net", "example10@mail.com", "Sujet 10", "Contenu 10", LocalDateTime.now()),
-                new Email("11", "marie.dupont@gmail.com", "example11@mail.com", "Sujet 11", "Contenu 11", LocalDateTime.now()),
-                new Email("12", "quentin.leroy@hotmail.fr", "example12@mail.com", "Sujet 12", "Contenu 12", LocalDateTime.now()),
-                new Email("13", "sophie.giraud@edu.univ.fr", "example13@mail.com", "Sujet 13", "Contenu 13", LocalDateTime.now()),
-                new Email("14", "antoine.roche@orange.fr", "example14@mail.com", "Sujet 14", "Contenu 14", LocalDateTime.now()),
-                new Email("15", "claire.benoit@yahoo.com", "example15@mail.com", "Sujet 15", "Contenu 15", LocalDateTime.now())
-        );
+        mailBox.addEmail(new Email("1", "mathis.pipart@gmail.com", List.of("example1@mail.com"), "Sujet 1", "Contenu 1", LocalDateTime.now()));
+        mailBox.addEmail(new Email("2", "mathis.pipart@free.fr", Arrays.asList("example2@mail.com", "exampleA@mail.com", "example7@mail.com", "exampleE@mail.com"), "Sujet 2", "Contenu 2", LocalDateTime.now()));
+        mailBox.addEmail(new Email("3", "paul.zerial@edu.esiee.fr", Arrays.asList("example3@mail.com", "exampleB@mail.com", "exampleC@mail.com"), "Sujet 3", "Contenu 3", LocalDateTime.now()));
+        mailBox.addEmail(new Email("4", "alice.durand@gmail.com", List.of("example4@mail.com"), "Sujet 4", "Contenu 4", LocalDateTime.now()));
+        mailBox.addEmail(new Email("5", "julien.martin@orange.fr", Arrays.asList("example5@mail.com", "exampleD@mail.com"), "Sujet 5", "Contenu 5", LocalDateTime.now()));
+        mailBox.addEmail(new Email("6", "emma.lefevre@hotmail.com", List.of("example6@mail.com"), "Sujet 6", "Contenu 6", LocalDateTime.now()));
+        mailBox.addEmail(new Email("7", "lucas.bernard@edu.univ.fr", Arrays.asList("example7@mail.com", "exampleE@mail.com"), "Sujet 7", "Contenu 7", LocalDateTime.now()));
+        mailBox.addEmail(new Email("8", "charlotte.dubois@gmail.com", Arrays.asList("example8@mail.com", "exampleF@mail.com", "exampleG@mail.com"), "Sujet 8", "Contenu 8", LocalDateTime.now()));
+        mailBox.addEmail(new Email("9", "nicolas.perrin@yahoo.fr", List.of("example9@mail.com"), "Sujet 9", "Contenu 9", LocalDateTime.now()));
+        mailBox.addEmail(new Email("10", "lea.moreau@laposte.net", List.of("example10@mail.com"), "Sujet 10", "Contenu 10", LocalDateTime.now()));
+        mailBox.addEmail(new Email("11", "marie.dupont@gmail.com", Arrays.asList("example11@mail.com", "exampleH@mail.com"), "Sujet 11", "Contenu 11", LocalDateTime.now()));
+        mailBox.addEmail(new Email("12", "quentin.leroy@hotmail.fr", Arrays.asList("example12@mail.com", "exampleI@mail.com"), "Sujet 12", "Contenu 12", LocalDateTime.now()));
+        mailBox.addEmail(new Email("13", "sophie.giraud@edu.univ.fr", List.of("example13@mail.com"), "Sujet 13", "Contenu 13", LocalDateTime.now()));
+        mailBox.addEmail(new Email("14", "antoine.roche@orange.fr", Arrays.asList("example14@mail.com", "exampleJ@mail.com"), "Sujet 14", "Contenu 14", LocalDateTime.now()));
+        mailBox.addEmail(new Email("15", "claire.benoit@yahoo.com", Arrays.asList("example15@mail.com", "exampleK@mail.com", "exampleL@mail.com"), "Sujet 15", "Contenu 15", LocalDateTime.now()));
     }
 }

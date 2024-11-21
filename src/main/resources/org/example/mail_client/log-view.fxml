@@ -9,7 +9,7 @@
 <AnchorPane prefHeight="360.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mail_client.controller.LogController">
 
         <children>
-            <TextField fx:id="mailTextField" alignment="CENTER" layoutX="98.0" layoutY="148.0" promptText="Enter your mail" />
+            <TextField fx:id="mailTextField" alignment="CENTER" layoutX="69.0" layoutY="148.0" prefHeight="25.0" prefWidth="209.0" promptText="Enter your mail" />
             <Label alignment="CENTER" contentDisplay="CENTER" layoutX="94.0" layoutY="97.0" prefHeight="31.0" prefWidth="156.0" text="Enter your mail">
          <font>
             <Font name="System Bold" size="21.0" />

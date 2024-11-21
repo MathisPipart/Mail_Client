@@ -1,16 +1,17 @@
 package org.example.mail_client.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Email {
     private String id;
     private String sender;
-    private String receiver;
+    private List<String> receiver;
     private String subject;
     private String content;
     private LocalDateTime timestamp;
 
-    public Email(String id, String sender, String receiver, String subject, String content, LocalDateTime timestamp) {
+    public Email(String id, String sender, List<String>  receiver, String subject, String content, LocalDateTime timestamp) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
@@ -28,7 +29,7 @@ public class Email {
         return sender;
     }
 
-    public String getReceiver() {
+    public List<String>  getReceiver() {
         return receiver;
     }
 
