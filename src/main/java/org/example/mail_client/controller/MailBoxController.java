@@ -15,6 +15,7 @@ import org.example.mail_client.model.Email;
 import org.example.mail_client.model.MailBox;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -78,7 +79,7 @@ public class MailBoxController {
             selectedSenderLabel.setText(newSelection.getSender());
             updateReceiverTextFlow(newSelection.getReceiver());
             selectedSubjectLabel.setText(newSelection.getSubject());
-            selectedDateLabel.setText(newSelection.getTimestamp().toString());
+            selectedDateLabel.setText(formatDate(newSelection.getTimestamp()));
 
             selectedContentTextFlow.getChildren().clear();
             Text contentText = new Text(newSelection.getContent());
@@ -166,5 +167,10 @@ public class MailBoxController {
         mailBox.addEmail(new Email("13", "sophie.giraud@edu.univ.fr", List.of("example13@mail.com"), "Sujet 13", "Contenu 13", LocalDateTime.now()));
         mailBox.addEmail(new Email("14", "antoine.roche@orange.fr", Arrays.asList("example14@mail.com", "exampleJ@mail.com"), "Sujet 14", "Contenu 14", LocalDateTime.now()));
         mailBox.addEmail(new Email("15", "claire.benoit@yahoo.com", Arrays.asList("example15@mail.com", "exampleK@mail.com", "exampleL@mail.com"), "Sujet 15", "Contenu 15", LocalDateTime.now()));
+    }
+
+    private String formatDate(LocalDateTime timestamp) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy, HH:mm:ss");
+        return timestamp.format(formatter);
     }
 }

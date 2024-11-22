@@ -70,7 +70,7 @@
                                        <Font name="System Bold" size="12.0" />
                                     </font>
                                  </Label>
-                                 <Label fx:id="selectedSenderLabel" prefHeight="17.0" prefWidth="234.0" text="test@gmail.com" />
+                                 <Label fx:id="selectedSenderLabel" prefHeight="17.0" prefWidth="234.0" />
                               </children>
                            </HBox>
                            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
@@ -117,7 +117,7 @@
                                     </HBox.margin></Button>
                               </children>
                            </HBox>
-                           <Label fx:id="selectedDateLabel" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="289.0" text="Date">
+                           <Label fx:id="selectedDateLabel" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="289.0">
                               <padding>
                                  <Insets bottom="15.0" top="5.0" />
                               </padding>
@@ -129,7 +129,7 @@
                      </VBox>
                      <VBox GridPane.columnSpan="2" GridPane.rowIndex="1">
                         <children>
-                           <Label fx:id="selectedSubjectLabel" alignment="TOP_LEFT" prefHeight="39.0" prefWidth="771.0" text="Subject">
+                           <Label fx:id="selectedSubjectLabel" alignment="TOP_LEFT" prefHeight="39.0" prefWidth="771.0">
                               <font>
                                  <Font name="System Bold" size="12.0" />
                               </font>
