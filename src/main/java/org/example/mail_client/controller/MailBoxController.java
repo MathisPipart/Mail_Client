@@ -246,7 +246,6 @@ public class MailBoxController {
             NewMailController controller = fxmlLoader.getController();
             controller.setUserMail(user.getEmail());
 
-            controller.setSendTo(currentMail.getSender());
             controller.setSubject("FW: " + currentMail.getSubject());
             controller.setContent(currentMail.getContent());
 
