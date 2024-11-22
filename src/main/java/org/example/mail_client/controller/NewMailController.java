@@ -19,6 +19,22 @@ public class NewMailController {
     @FXML
     private TextArea content;
 
+    public Label getMailName() {
+        return mailName;
+    }
+
+    public TextField getSendTo() {
+        return sendTo;
+    }
+
+    public TextField getSubject() {
+        return subject;
+    }
+
+    public TextArea getContent() {
+        return content;
+    }
+
     public void setUserMail(String email) {
         mailName.setText(email);
     }

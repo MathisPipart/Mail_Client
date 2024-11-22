@@ -201,6 +201,7 @@ public class MailBoxController {
             Stage newMailStage = new Stage();
             newMailStage.setTitle("Reply Mail");
             newMailStage.setScene(scene);
+            newMailStage.setOnShown(event -> controller.getContent().requestFocus());
             newMailStage.show();
         }
         else{
@@ -230,6 +231,7 @@ public class MailBoxController {
         Stage newMailStage = new Stage();
         newMailStage.setTitle("Reply All Mail");
         newMailStage.setScene(scene);
+        newMailStage.setOnShown(event -> controller.getContent().requestFocus());
         newMailStage.show();
         }
         else{
@@ -252,6 +254,7 @@ public class MailBoxController {
             Stage newMailStage = new Stage();
             newMailStage.setTitle("Reply Mail");
             newMailStage.setScene(scene);
+            newMailStage.setOnShown(event -> controller.getSendTo().requestFocus());
             newMailStage.show();
         }
         else{
