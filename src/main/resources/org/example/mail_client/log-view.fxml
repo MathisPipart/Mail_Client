@@ -16,6 +16,7 @@
          </font>
       </Label>
             <Button layoutX="97.0" layoutY="220.0" onAction="#openMailBoxStage" prefHeight="25.0" prefWidth="149.0" text="Login" />
+      <Label fx:id="invalidMailLabel" alignment="CENTER" layoutX="99.0" layoutY="180.0" prefHeight="17.0" prefWidth="149.0" text="invalid mail syntax" textFill="#b60f0f" visible="false"/>
         </children>
 
 </AnchorPane>
