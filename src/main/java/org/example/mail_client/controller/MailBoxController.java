@@ -1,7 +1,5 @@
 package org.example.mail_client.controller;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,6 +11,7 @@ import javafx.stage.Stage;
 import org.example.mail_client.MailApplication;
 import org.example.mail_client.model.Email;
 import org.example.mail_client.model.MailBox;
+import org.example.mail_client.model.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -44,15 +43,24 @@ public class MailBoxController {
     @FXML
     private Button replyButton, replyAllButton, forwardButton, deleteButton;
 
+    private User user;
+
     private final MailBox mailBox = new MailBox();
+
+    public void setUser(User user) {
+        this.user = user;
+
+        // Configurer l'affichage pour l'utilisateur
+        mailName.setText(user.getEmail());
+        addMail(); //fictif
+        emailTable.setItems(user.getMailBox().getEmails());
+    }
 
     @FXML
     public void initialize() {
         listenerOnClickListMail();
         cellsInitialisation();
-        addMail();
 
-        emailTable.setItems(mailBox.getEmails());
     }
 
     @FXML
@@ -61,7 +69,7 @@ public class MailBoxController {
         Scene scene = new Scene(fxmlLoader.load(), 598, 488);
 
         NewMailController controller = fxmlLoader.getController();
-        controller.setUserMail(mailName.getText());
+        controller.setUserMail(user);
 
         Stage newMailStage = new Stage();
         newMailStage.setTitle("New Mail");
@@ -167,6 +175,7 @@ public class MailBoxController {
         mailBox.addEmail(new Email("13", "sophie.giraud@edu.univ.fr", List.of("example13@mail.com"), "Sujet 13", "Contenu 13", LocalDateTime.now()));
         mailBox.addEmail(new Email("14", "antoine.roche@orange.fr", Arrays.asList("example14@mail.com", "exampleJ@mail.com"), "Sujet 14", "Contenu 14", LocalDateTime.now()));
         mailBox.addEmail(new Email("15", "claire.benoit@yahoo.com", Arrays.asList("example15@mail.com", "exampleK@mail.com", "exampleL@mail.com"), "Sujet 15", "Contenu 15", LocalDateTime.now()));
+        user.setMailBox(mailBox);
     }
 
     private String formatDate(LocalDateTime timestamp) {

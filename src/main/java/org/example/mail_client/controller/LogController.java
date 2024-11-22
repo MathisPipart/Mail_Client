@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import org.example.mail_client.MailApplication;
+import org.example.mail_client.model.User;
 
 import java.util.regex.Pattern;
 
@@ -32,7 +33,8 @@ public class LogController {
 
         MailBoxController mailBoxController = fxmlLoader.getController();
         //Pass the login mail to the mail box
-        mailBoxController.setReceivedMailText(mail);
+        User currentUser = new User(mail);
+        mailBoxController.setUser(currentUser);
 
         Stage stage = new Stage();
         stage.setTitle("Mail");
