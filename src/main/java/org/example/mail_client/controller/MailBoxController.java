@@ -196,7 +196,7 @@ public class MailBoxController {
             controller.setUserMail(user.getEmail());
 
             controller.setSendTo(currentMail.getSender());
-            controller.setSubject(currentMail.getSubject());
+            controller.setSubject("RE: " + currentMail.getSubject());
 
             Stage newMailStage = new Stage();
             newMailStage.setTitle("Reply Mail");
@@ -225,12 +225,35 @@ public class MailBoxController {
         }
         controller.setSendTo(allReceivers);
 
-        controller.setSubject(currentMail.getSubject());
+        controller.setSubject("RE: " + currentMail.getSubject());
 
         Stage newMailStage = new Stage();
         newMailStage.setTitle("Reply All Mail");
         newMailStage.setScene(scene);
         newMailStage.show();
+        }
+        else{
+            System.out.println("No mail selected");
+        }
+    }
+
+    @FXML
+    public void forwardMailStage() throws Exception {
+        if(currentMail != null) {
+            FXMLLoader fxmlLoader = new FXMLLoader(MailApplication.class.getResource("newMail-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 598, 488);
+
+            NewMailController controller = fxmlLoader.getController();
+            controller.setUserMail(user.getEmail());
+
+            controller.setSendTo(currentMail.getSender());
+            controller.setSubject("FW: " + currentMail.getSubject());
+            controller.setContent(currentMail.getContent());
+
+            Stage newMailStage = new Stage();
+            newMailStage.setTitle("Reply Mail");
+            newMailStage.setScene(scene);
+            newMailStage.show();
         }
         else{
             System.out.println("No mail selected");

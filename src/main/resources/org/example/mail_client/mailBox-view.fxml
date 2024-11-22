@@ -107,7 +107,7 @@
                                     <HBox.margin>
                                        <Insets bottom="7.0" />
                                     </HBox.margin></Button>
-                                 <Button mnemonicParsing="false" text="Forward">
+                                 <Button mnemonicParsing="false" onAction="#forwardMailStage" text="Forward">
                                     <HBox.margin>
                                        <Insets bottom="7.0" />
                                     </HBox.margin></Button>
