@@ -72,7 +72,7 @@ public class MailBoxController {
         Scene scene = new Scene(fxmlLoader.load(), 598, 488);
 
         NewMailController controller = fxmlLoader.getController();
-        controller.setUserMail(user);
+        controller.setUserMail(user.getEmail());
 
         Stage newMailStage = new Stage();
         newMailStage.setTitle("New Mail");
@@ -185,8 +185,64 @@ public class MailBoxController {
         return timestamp.format(formatter);
     }
 
+
+    @FXML
+    public void replyMailStage() throws Exception {
+        if(currentMail != null) {
+            FXMLLoader fxmlLoader = new FXMLLoader(MailApplication.class.getResource("newMail-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 598, 488);
+
+            NewMailController controller = fxmlLoader.getController();
+            controller.setUserMail(user.getEmail());
+
+            controller.setSendTo(currentMail.getSender());
+            controller.setSubject(currentMail.getSubject());
+
+            Stage newMailStage = new Stage();
+            newMailStage.setTitle("Reply Mail");
+            newMailStage.setScene(scene);
+            newMailStage.show();
+        }
+        else{
+            System.out.println("No mail selected");
+        }
+    }
+
+    @FXML
+    public void replyAllMailStage() throws Exception {
+        if(currentMail != null) {
+        FXMLLoader fxmlLoader = new FXMLLoader(MailApplication.class.getResource("newMail-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 598, 488);
+
+        NewMailController controller = fxmlLoader.getController();
+        controller.setUserMail(user.getEmail());
+
+
+        String allReceivers = currentMail.getSender()+ ";  ";
+        for (String receiver : currentMail.getReceiver()) {
+            if(!user.getEmail().equals(receiver))
+                allReceivers += receiver + ";  ";
+        }
+        controller.setSendTo(allReceivers);
+
+        controller.setSubject(currentMail.getSubject());
+
+        Stage newMailStage = new Stage();
+        newMailStage.setTitle("Reply All Mail");
+        newMailStage.setScene(scene);
+        newMailStage.show();
+        }
+        else{
+            System.out.println("No mail selected");
+        }
+    }
+
     @FXML
     public void deleteMail(){
+        if(currentMail == null) {
+            System.out.println("No mail selected");
+        }
+
         if(! user.getMailBox().getEmails().isEmpty()){
             user.getMailBox().deleteEmail(currentMail);
         }

@@ -99,11 +99,11 @@
                         <children>
                            <HBox alignment="CENTER" minWidth="289.33333333" prefHeight="100.0" prefWidth="200.0" spacing="24.0">
                               <children>
-                                 <Button mnemonicParsing="false" text="Reply">
+                                 <Button mnemonicParsing="false" onAction="#replyMailStage" text="Reply">
                                     <HBox.margin>
                                        <Insets bottom="7.0" />
                                     </HBox.margin></Button>
-                                 <Button mnemonicParsing="false" text="Reply All">
+                                 <Button mnemonicParsing="false" onAction="#replyAllMailStage" text="Reply All">
                                     <HBox.margin>
                                        <Insets bottom="7.0" />
                                     </HBox.margin></Button>
