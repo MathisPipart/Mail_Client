@@ -47,6 +47,8 @@ public class MailBoxController {
 
     private final MailBox mailBox = new MailBox();
 
+    private Email currentMail;
+
     public void setUser(User user) {
         this.user = user;
 
@@ -61,6 +63,7 @@ public class MailBoxController {
         listenerOnClickListMail();
         cellsInitialisation();
 
+        emailTable.setPlaceholder(new Label("No email to display."));
     }
 
     @FXML
@@ -77,21 +80,20 @@ public class MailBoxController {
         newMailStage.show();
     }
 
-    public void setReceivedMailText(String text) {
-        mailName.setText(text);
-    }
-
     private void listenerOnClickListMail(){
         emailTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            // Mettre à jour le label avec le sender de l'email sélectionné
-            selectedSenderLabel.setText(newSelection.getSender());
-            updateReceiverTextFlow(newSelection.getReceiver());
-            selectedSubjectLabel.setText(newSelection.getSubject());
-            selectedDateLabel.setText(formatDate(newSelection.getTimestamp()));
+            if(newSelection != null){
+                currentMail = newSelection;
+                // Mettre à jour le label avec le sender de l'email sélectionné
+                selectedSenderLabel.setText(newSelection.getSender());
+                updateReceiverTextFlow(newSelection.getReceiver());
+                selectedSubjectLabel.setText(newSelection.getSubject());
+                selectedDateLabel.setText(formatDate(newSelection.getTimestamp()));
 
-            selectedContentTextFlow.getChildren().clear();
-            Text contentText = new Text(newSelection.getContent());
-            selectedContentTextFlow.getChildren().add(contentText);
+                selectedContentTextFlow.getChildren().clear();
+                Text contentText = new Text(newSelection.getContent());
+                selectedContentTextFlow.getChildren().add(contentText);
+            }
         });
     }
 
@@ -182,4 +184,15 @@ public class MailBoxController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy, HH:mm:ss");
         return timestamp.format(formatter);
     }
+
+    @FXML
+    public void deleteMail(){
+        if(! user.getMailBox().getEmails().isEmpty()){
+            user.getMailBox().deleteEmail(currentMail);
+        }
+        else {
+            System.out.println("No mail to delete");
+        }
+    }
+
 }
