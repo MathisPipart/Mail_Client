@@ -1,10 +1,13 @@
 package org.example.mail_client.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import org.example.mail_client.model.User;
+import javafx.stage.Stage;
+
+import java.util.regex.Pattern;
 
 public class NewMailController {
     @FXML
@@ -49,5 +52,49 @@ public class NewMailController {
 
     public void setContent(String content) {
         this.content.setText(content);
+    }
+
+    @FXML
+    private void sendMail() {
+        // Validate fields
+        if (!areFieldsValid()) {
+            return;
+        }
+
+        // Simulate sending mail
+        System.out.println("Mail sent to: " + sendTo.getText());
+        System.out.println("Subject: " + subject.getText());
+        System.out.println("Content: " + content.getText());
+
+        // Close the current stage
+        Stage stageNewMail = (Stage) sendTo.getScene().getWindow();
+        stageNewMail.close();
+    }
+
+    private boolean areFieldsValid() {
+        if (sendTo.getText().isEmpty() || subject.getText().isEmpty() || content.getText().isEmpty()) {
+            showAlert("Validation Error", "All fields must be filled.");
+            return false;
+        }
+
+        if (!isValidEmail(sendTo.getText())) {
+            showAlert("Email Address Error", "The email address is not valid.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        return Pattern.matches(emailRegex, email);
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
