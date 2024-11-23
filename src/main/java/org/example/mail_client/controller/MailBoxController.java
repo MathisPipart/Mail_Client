@@ -19,10 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MailBoxController {
-
-    @FXML
-    private Label mailName;
-
     @FXML
     private TableView<Email> emailTable;
 
@@ -30,18 +26,16 @@ public class MailBoxController {
     private TableColumn<Email, String> emailColumn;
 
     @FXML
-    private Label selectedSenderLabel;
+    private Label mailName, selectedSenderLabel, selectedSubjectLabel, selectedDateLabel, fromLabel, toLabel;
+
     @FXML
-    private TextFlow selectedReceiverTextFlow;
-    @FXML
-    private Label selectedSubjectLabel;
-    @FXML
-    private TextFlow selectedContentTextFlow;
-    @FXML
-    private Label selectedDateLabel;
+    private TextFlow selectedReceiverTextFlow, selectedContentTextFlow;
 
     @FXML
     private Button replyButton, replyAllButton, forwardButton, deleteButton;
+
+    @FXML
+    private ScrollPane receiverScrollPane;
 
     private User user;
 
@@ -93,8 +87,21 @@ public class MailBoxController {
                 selectedContentTextFlow.getChildren().clear();
                 Text contentText = new Text(newSelection.getContent());
                 selectedContentTextFlow.getChildren().add(contentText);
+
+                setVisible();
             }
         });
+    }
+
+    private void setVisible(){
+        fromLabel.setVisible(true);
+        toLabel.setVisible(true);
+        replyButton.setVisible(true);
+        replyAllButton.setVisible(true);
+        forwardButton.setVisible(true);
+        deleteButton.setVisible(true);
+        selectedContentTextFlow.setVisible(true);
+        receiverScrollPane.setVisible(true);
     }
 
     @FXML
@@ -195,7 +202,7 @@ public class MailBoxController {
             NewMailController controller = fxmlLoader.getController();
             controller.setUserMail(user.getEmail());
 
-            controller.setSendTo(currentMail.getSender());
+            controller.setSendTo(currentMail.getSender()+";");
             controller.setSubject("RE: " + currentMail.getSubject());
 
             Stage newMailStage = new Stage();

@@ -65,7 +65,7 @@
                         <children>
                            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                               <children>
-                                 <Label text="From :">
+                                 <Label fx:id="fromLabel" text="From :" visible="false">
                                     <font>
                                        <Font name="System Bold" size="12.0" />
                                     </font>
@@ -75,7 +75,7 @@
                            </HBox>
                            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                               <children>
-                                 <Label alignment="TOP_LEFT" text="To :">
+                                 <Label fx:id="toLabel" alignment="TOP_LEFT" text="To :" visible="false">
                                     <font>
                                        <Font name="System Bold" size="12.0" />
                                     </font>
@@ -83,7 +83,7 @@
                                        <Insets bottom="25.0" />
                                     </HBox.margin>
                                  </Label>
-                                 <ScrollPane fx:id="receiverScrollPane" fitToWidth="true" prefHeight="36.0" prefWidth="242.0">
+                                 <ScrollPane fx:id="receiverScrollPane" fitToWidth="true" prefHeight="36.0" prefWidth="242.0" visible="false">
                                     <content>
                                        <TextFlow fx:id="selectedReceiverTextFlow" />
                                     </content>
@@ -99,19 +99,19 @@
                         <children>
                            <HBox alignment="CENTER" minWidth="289.33333333" prefHeight="100.0" prefWidth="200.0" spacing="24.0">
                               <children>
-                                 <Button mnemonicParsing="false" onAction="#replyMailStage" text="Reply">
+                                 <Button fx:id="replyButton" mnemonicParsing="false" onAction="#replyMailStage" text="Reply" visible="false">
                                     <HBox.margin>
                                        <Insets bottom="7.0" />
                                     </HBox.margin></Button>
-                                 <Button mnemonicParsing="false" onAction="#replyAllMailStage" text="Reply All">
+                                 <Button fx:id="replyAllButton" mnemonicParsing="false" onAction="#replyAllMailStage" text="Reply All" visible="false">
                                     <HBox.margin>
                                        <Insets bottom="7.0" />
                                     </HBox.margin></Button>
-                                 <Button mnemonicParsing="false" onAction="#forwardMailStage" text="Forward">
+                                 <Button fx:id="forwardButton" mnemonicParsing="false" onAction="#forwardMailStage" text="Forward" visible="false">
                                     <HBox.margin>
                                        <Insets bottom="7.0" />
                                     </HBox.margin></Button>
-                                 <Button mnemonicParsing="false" onAction="#deleteMail" text="Delete">
+                                 <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteMail" text="Delete" visible="false">
                                     <HBox.margin>
                                        <Insets bottom="7.0" />
                                     </HBox.margin></Button>
@@ -134,7 +134,7 @@
                                  <Font name="System Bold" size="12.0" />
                               </font>
                            </Label>
-                           <TextFlow fx:id="selectedContentTextFlow" prefHeight="582.0" prefWidth="578.0" />
+                           <TextFlow fx:id="selectedContentTextFlow" prefHeight="582.0" prefWidth="578.0" visible="false" />
                         </children>
                         <padding>
                            <Insets top="10.0" />

@@ -7,6 +7,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class NewMailController {
@@ -77,13 +78,22 @@ public class NewMailController {
             return false;
         }
 
-        if (!isValidEmail(sendTo.getText())) {
-            showAlert("Email Address Error", "The email address is not valid.");
+        if (!areEmailsValid(sendTo.getText())) {
+            showAlert("Validation Error", "One or more email addresses are invalid.");
             return false;
         }
 
         return true;
     }
+
+    private boolean areEmailsValid(String emails) {
+        // Delete unnecessary spaces, divide by “;”, manage multiple spaces between e-mails
+        String[] emailArray = emails.split("\\s*;\\s*");
+        return Arrays.stream(emailArray)
+                .allMatch(this::isValidEmail);
+    }
+
+
 
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
