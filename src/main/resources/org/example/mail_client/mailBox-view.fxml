@@ -29,7 +29,7 @@
                            <Font name="System Bold" size="14.0" />
                         </font>
                      </Label>
-                     <Button alignment="CENTER" contentDisplay="RIGHT" layoutX="901.0" mnemonicParsing="false" onAction="#openNewMailStage" prefHeight="25.0" prefWidth="81.0" text="New Mail" />
+                     <Button fx:id="newMailButton" alignment="CENTER" contentDisplay="RIGHT" layoutX="901.0" mnemonicParsing="false" onAction="#openNewMailStage" prefHeight="25.0" prefWidth="81.0" text="New Mail" />
                      <Label layoutY="4.0" prefHeight="17.0" prefWidth="81.0" text="Not Connected" />
                   </children>
                </AnchorPane>
@@ -44,12 +44,12 @@
       <left>
          <TableView fx:id="emailTable" prefHeight="747.0" prefWidth="400.0" BorderPane.alignment="CENTER">
            <columns>
-             <TableColumn fx:id="emailColumn" maxWidth="400.0" prefWidth="400.0" resizable="false" text="Your mails" />
+             <TableColumn fx:id="emailColumn" maxWidth="400.0" prefWidth="400.0" resizable="false" sortable="false" text="Your mails" />
            </columns>
          </TableView>
       </left>
       <center>
-         <TitledPane collapsible="false" prefHeight="748.0" prefWidth="497.0" text="My mail" BorderPane.alignment="TOP_CENTER">
+         <TitledPane animated="false" prefHeight="748.0" prefWidth="497.0" text="My mail" BorderPane.alignment="TOP_CENTER">
             <content>
                <GridPane>
                  <columnConstraints>

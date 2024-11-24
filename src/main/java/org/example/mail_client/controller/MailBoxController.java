@@ -2,8 +2,13 @@ package org.example.mail_client.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -32,7 +37,7 @@ public class MailBoxController {
     private TextFlow selectedReceiverTextFlow, selectedContentTextFlow;
 
     @FXML
-    private Button replyButton, replyAllButton, forwardButton, deleteButton;
+    private Button newMailButton, replyButton, replyAllButton, forwardButton, deleteButton;
 
     @FXML
     private ScrollPane receiverScrollPane;
@@ -56,6 +61,7 @@ public class MailBoxController {
     public void initialize() {
         listenerOnClickListMail();
         cellsInitialisation();
+        enableAllButton();
 
         emailTable.setPlaceholder(new Label("No email to display."));
     }
@@ -114,57 +120,67 @@ public class MailBoxController {
         }
     }
 
-    private void cellsInitialisation(){
+    private void cellsInitialisation() {
         emailTable.setRowFactory(tv -> new TableRow<Email>() {
             @Override
             protected void updateItem(Email item, boolean empty) {
                 super.updateItem(item, empty);
 
                 if (empty || item == null) {
-                    setStyle("-fx-background-color: white;"); // Lignes vides : fond blanc
-                    setText(null); // Pas de texte
+                    setStyle("-fx-background-color: white;"); // Set background color for empty rows
+                    setText(null);
                 } else {
-                    setStyle(""); // Réinitialiser le style pour les lignes non vides
+                    setStyle("");
                 }
             }
         });
 
-        // Configurer le CellFactory pour afficher les informations
+        // Configure CellFactory to display email information
         emailColumn.setCellFactory(column -> new TableCell<Email, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
 
                 if (empty || getTableRow() == null || getTableRow().getItem() == null) {
-                    setGraphic(null); // Pas de contenu pour les cellules vides
+                    setGraphic(null); // No content for empty cells
                     setText(null);
                 } else {
-                    // Récupérer l'email correspondant à la ligne
+                    // Retrieve the email for the current row
                     Email email = (Email) getTableRow().getItem();
 
-                    // Label pour "From"
                     Label fromLabel = new Label("From: " + email.getSender());
                     fromLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
 
-                    // Label pour "Subject"
                     Label subjectLabel = new Label("Subject: " + email.getSubject());
                     subjectLabel.setStyle("-fx-font-weight: bold;");
 
-                    // Label pour "Content"
                     Label contentLabel = new Label(email.getContent());
                     contentLabel.setStyle("-fx-text-fill: grey;");
 
-                    // Organiser les labels dans un VBox
-                    VBox vbox = new VBox(fromLabel, subjectLabel, contentLabel);
-                    vbox.setSpacing(5); // Espacement entre les éléments
+                    Button deleteButton = new Button("Delete");
+                    deleteButton.setPrefWidth(50); // Set fixed button width
+                    deleteButton.setOnAction(event -> listenerDeleteMailViaList(email));
+                    enableHoverEffect(deleteButton);
 
-                    setGraphic(vbox); // Afficher le VBox comme contenu de la cellule
-                    setText(null); // Ne pas utiliser de texte brut
+                    Region spacerBefore = new Region();
+                    HBox.setHgrow(spacerBefore, Priority.ALWAYS);
+                    Region spacerAfter = new Region();
+                    spacerAfter.setMinWidth(20);
+
+                    VBox vbox = new VBox(fromLabel, subjectLabel, contentLabel);
+                    vbox.setSpacing(5);
+
+                    HBox hbox = new HBox(vbox, spacerBefore, deleteButton, spacerAfter);
+                    hbox.setSpacing(10);
+                    hbox.setAlignment(Pos.CENTER_LEFT);
+
+                    setGraphic(hbox);
+                    setText(null);
                 }
             }
         });
 
-        //No Horizontal scrollbar
+        // Disable horizontal scrollbar
         emailTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
@@ -191,7 +207,6 @@ public class MailBoxController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy, HH:mm:ss");
         return timestamp.format(formatter);
     }
-
 
     @FXML
     public void replyMailStage() throws Exception {
@@ -283,4 +298,22 @@ public class MailBoxController {
         }
     }
 
+    @FXML
+    public void listenerDeleteMailViaList(Email email){
+        currentMail = email;
+        deleteMail();
+    }
+
+    public void enableAllButton(){
+        enableHoverEffect(newMailButton);
+        enableHoverEffect(replyButton);
+        enableHoverEffect(replyAllButton);
+        enableHoverEffect(forwardButton);
+        enableHoverEffect(deleteButton);
+    }
+
+    public void enableHoverEffect(Button button) {
+        button.setOnMouseEntered(event -> button.setStyle("-fx-cursor: hand;")); // Change le curseur en main
+        button.setOnMouseExited(event -> button.setStyle("")); // Réinitialise le style
+    }
 }

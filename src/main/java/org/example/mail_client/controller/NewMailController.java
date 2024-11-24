@@ -1,10 +1,7 @@
 package org.example.mail_client.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.util.Arrays;
@@ -22,6 +19,9 @@ public class NewMailController {
 
     @FXML
     private TextArea content;
+
+    @FXML
+    private Button sendButton;
 
     public Label getMailName() {
         return mailName;
@@ -53,6 +53,12 @@ public class NewMailController {
 
     public void setContent(String content) {
         this.content.setText(content);
+    }
+
+    @FXML
+    private void initialize() {
+        sendButton.setOnMouseEntered(event -> sendButton.setStyle("-fx-cursor: hand;"));
+        sendButton.setOnMouseExited(event -> sendButton.setStyle(""));
     }
 
     @FXML
