@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
-import org.example.mail_client.MailApplication;
+import org.example.mail_client.MailClientApplication;
 import org.example.mail_client.model.User;
 
 import java.util.regex.Pattern;
@@ -28,7 +28,7 @@ public class LogController {
             return;
         }
 
-        FXMLLoader fxmlLoader = new FXMLLoader(MailApplication.class.getResource("mailBox-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MailClientApplication.class.getResource("mailBox-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1000, 800);
 
         MailBoxController mailBoxController = fxmlLoader.getController();

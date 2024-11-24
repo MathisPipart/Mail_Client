@@ -2,7 +2,6 @@ package org.example.mail_client.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -13,7 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import org.example.mail_client.MailApplication;
+import org.example.mail_client.MailClientApplication;
 import org.example.mail_client.model.Email;
 import org.example.mail_client.model.MailBox;
 import org.example.mail_client.model.User;
@@ -68,7 +67,7 @@ public class MailBoxController {
 
     @FXML
     public void openNewMailStage() throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(MailApplication.class.getResource("newMail-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MailClientApplication.class.getResource("newMail-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 598, 488);
 
         NewMailController controller = fxmlLoader.getController();
@@ -211,7 +210,7 @@ public class MailBoxController {
     @FXML
     public void replyMailStage() throws Exception {
         if(currentMail != null) {
-            FXMLLoader fxmlLoader = new FXMLLoader(MailApplication.class.getResource("newMail-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MailClientApplication.class.getResource("newMail-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 598, 488);
 
             NewMailController controller = fxmlLoader.getController();
@@ -234,7 +233,7 @@ public class MailBoxController {
     @FXML
     public void replyAllMailStage() throws Exception {
         if(currentMail != null) {
-        FXMLLoader fxmlLoader = new FXMLLoader(MailApplication.class.getResource("newMail-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MailClientApplication.class.getResource("newMail-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 598, 488);
 
         NewMailController controller = fxmlLoader.getController();
@@ -264,7 +263,7 @@ public class MailBoxController {
     @FXML
     public void forwardMailStage() throws Exception {
         if(currentMail != null) {
-            FXMLLoader fxmlLoader = new FXMLLoader(MailApplication.class.getResource("newMail-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MailClientApplication.class.getResource("newMail-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 598, 488);
 
             NewMailController controller = fxmlLoader.getController();
