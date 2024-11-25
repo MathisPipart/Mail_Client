@@ -30,7 +30,7 @@ public class MailBoxController {
     private TableColumn<Email, String> emailColumn;
 
     @FXML
-    private Label mailName, selectedSenderLabel, selectedSubjectLabel, selectedDateLabel, fromLabel, toLabel;
+    private Label mailName, selectedSenderLabel, selectedSubjectLabel, selectedDateLabel, fromLabel, toLabel, connectedLabel;
 
     @FXML
     private TextFlow selectedReceiverTextFlow, selectedContentTextFlow;
