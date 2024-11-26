@@ -20,10 +20,10 @@ public class LogController {
 
     @FXML
     public void openMailBoxStage() throws Exception {
-        String mail = mailTextField.getText();
+        String mailName = mailTextField.getText();
 
         // mail syntax verification
-        if (!isValidEmail(mail)) {
+        if (!isValidEmail(mailName)) {
             invalidMailLabel.setVisible(true);
             return;
         }
@@ -33,7 +33,7 @@ public class LogController {
 
         MailBoxController mailBoxController = fxmlLoader.getController();
         //Pass the login mail to the mail box
-        User currentUser = new User(mail);
+        User currentUser = new User(mailName);
         mailBoxController.setUser(currentUser);
 
         Stage stage = new Stage();

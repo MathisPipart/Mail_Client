@@ -11,42 +11,43 @@ import java.util.Vector;
 
 public class ConnexionServer {
 
-    public void startClient(){
+    public void startClient() {
         try {
-            String nomeLocale = InetAddress.getLocalHost().getHostName();
-            System.out.println(nomeLocale);
-            Socket s = new Socket(nomeLocale, 8189);
+            String hostName = InetAddress.getLocalHost().getHostName();
+            System.out.println("Host name: " + hostName);
+            Socket socket = new Socket(hostName, 8189);
 
-            System.out.println("Ho aperto il socket verso il server.\n");
+            System.out.println("Connected to the server.\n");
 
-            try {
-                InputStream inStream = s.getInputStream();
-                Scanner in = new Scanner(inStream);
+            try (InputStream inStream = socket.getInputStream();
+                 Scanner in = new Scanner(inStream);
+                 ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream())) {
 
-                ObjectOutputStream outStream = new ObjectOutputStream(s.getOutputStream());
+                System.out.println("Waiting to receive data from the server...");
 
-                System.out.println("Sto per ricevere dati dal socket server!");
-
+                // Lire le message initial du serveur
                 String line = in.nextLine();
                 System.out.println(line);
 
-                boolean done = false;
-                Vector<Date> leDate = new Vector<Date>();
-                for (int i=0; i<4; i++)
-                    leDate.add(new Date());
+                // Préparer la liste des emails
+                Vector<String> emailList = new Vector<>();
+                emailList.add("alice@example.com");
+                emailList.add("bob@example.com");
+                emailList.add("charlie@example.com");
+                emailList.add("diana@example.com");
 
-                outStream.writeObject(leDate);
+                // Envoyer les emails au serveur
+                outStream.writeObject(emailList);
 
+                // Lire la réponse du serveur
                 while (in.hasNextLine()) {
                     line = in.nextLine();
-                    System.out.println("Ritorno: " + line);
+                    System.out.println("Server response: " + line);
                 }
+            } finally {
+                socket.close();
             }
-            finally {
-                s.close();
-            }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
