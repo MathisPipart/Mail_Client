@@ -36,13 +36,11 @@ public class ConnexionServer {
     // Méthode pour envoyer un email au serveur
     public boolean sendEmail(Email email) {
         try {
-            // Vérifier si le socket est connecté, sinon reconnecter
             if (socket == null || socket.isClosed()) {
                 System.out.println("Socket is not connected. Attempting to reconnect...");
                 startClient();
             }
 
-            // Envoyer l'objet Email
             outStream.writeObject(email);
             outStream.flush();
             System.out.println("Email sent to server: " + email);
@@ -51,14 +49,21 @@ public class ConnexionServer {
             String response = inStream.readLine();
             System.out.println("Server response: " + response);
 
-            // Déterminer si l'envoi a réussi
-            return "Mail received successfully.".equals(response);
+            if (response.startsWith("Mail received successfully with ID: ")) {
+                int emailId = Integer.parseInt(response.replace("Mail received successfully with ID: ", ""));
+                System.out.println("Email successfully sent with ID: " + emailId);
+                return true;
+            }
+
+            return false;
 
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
     }
+
+
 
     // Méthode pour fermer proprement la connexion avec le serveur
     public void closeClientConnection() {

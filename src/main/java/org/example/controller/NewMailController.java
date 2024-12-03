@@ -74,7 +74,7 @@ public class NewMailController {
 
         // Créer l'objet Email
         Email email = new Email(
-                null, // ID généré côté serveur
+                0, // ID par défaut pour indiquer qu'il sera généré côté serveur
                 mailName.getText(), // Expéditeur
                 Arrays.asList(sendTo.getText().split("\\s*;\\s*")), // Destinataires
                 subject.getText(), // Sujet
