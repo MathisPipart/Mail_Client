@@ -1,20 +1,13 @@
-package org.example.mail_client;
+package org.example;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.example.mail_client.controller.ConnexionServer;
-import org.example.mail_client.controller.LogController;
+import org.example.controller.ConnexionServer;
+import org.example.controller.LogController;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.util.Date;
-import java.util.Scanner;
-import java.util.Vector;
 
 public class MailClientApplication extends Application {
 
@@ -34,8 +27,14 @@ public class MailClientApplication extends Application {
         logStage.setScene(scene);
         logStage.show();
 
-        ConnexionServer connexionServer = new ConnexionServer();
-        connexionServer.startClient();
+        // Exécuter la connexion au serveur dans un thread séparé
+        Thread connectionThread = new Thread(() -> {
+            ConnexionServer connexionServer = new ConnexionServer();
+            connexionServer.startClient();
+        });
+
+        connectionThread.setDaemon(true); // Le thread s'arrête automatiquement lorsque l'application se ferme
+        connectionThread.start();
     }
 
 

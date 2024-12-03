@@ -1,12 +1,12 @@
-package org.example.mail_client.controller;
+package org.example.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
-import org.example.mail_client.MailClientApplication;
-import org.example.mail_client.model.User;
+import org.example.MailClientApplication;
+import org.example.model.User;
 
 import java.util.regex.Pattern;
 

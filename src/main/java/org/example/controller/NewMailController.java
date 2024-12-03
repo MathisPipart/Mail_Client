@@ -1,9 +1,11 @@
-package org.example.mail_client.controller;
+package org.example.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.example.model.Email;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -22,6 +24,8 @@ public class NewMailController {
 
     @FXML
     private Button sendButton;
+
+    private ConnexionServer connexionServer = new ConnexionServer();
 
     public Label getMailName() {
         return mailName;
@@ -68,14 +72,26 @@ public class NewMailController {
             return;
         }
 
-        // Simulate sending mail
-        System.out.println("Mail sent to: " + sendTo.getText());
-        System.out.println("Subject: " + subject.getText());
-        System.out.println("Content: " + content.getText());
+        // Créer l'objet Email
+        Email email = new Email(
+                null, // ID généré côté serveur
+                mailName.getText(), // Expéditeur
+                Arrays.asList(sendTo.getText().split("\\s*;\\s*")), // Destinataires
+                subject.getText(), // Sujet
+                content.getText(), // Contenu
+                LocalDateTime.now() // Timestamp
+        );
 
-        // Close the current stage
-        Stage stageNewMail = (Stage) sendTo.getScene().getWindow();
-        stageNewMail.close();
+        // Envoyer l'email via ConnexionServer
+        boolean success = connexionServer.sendEmail(email);
+
+        if (success) {
+            // Fermer la fenêtre
+            Stage stageNewMail = (Stage) sendTo.getScene().getWindow();
+            stageNewMail.close();
+        } else {
+            showAlert("Error", "Failed to send mail. Please try again.");
+        }
     }
 
     private boolean areFieldsValid() {

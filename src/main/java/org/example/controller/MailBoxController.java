@@ -1,4 +1,4 @@
-package org.example.mail_client.controller;
+package org.example.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,10 +12,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import org.example.mail_client.MailClientApplication;
-import org.example.mail_client.model.Email;
-import org.example.mail_client.model.MailBox;
-import org.example.mail_client.model.User;
+import org.example.MailClientApplication;
+import org.example.model.Email;
+import org.example.model.MailBox;
+import org.example.model.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
