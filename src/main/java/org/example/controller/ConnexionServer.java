@@ -11,25 +11,42 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ConnexionServer {
+    // Instance unique de Singleton
+    private static ConnexionServer instance;
+
+    // Variables de connexion
     private Socket socket;
     private ObjectOutputStream outStream;
     private BufferedReader inStream;
 
+    // Constructeur privé pour empêcher l'instanciation directe
+    private ConnexionServer() {
+    }
+
+    // Méthode pour récupérer l'instance unique
+    public static synchronized ConnexionServer getInstance() {
+        if (instance == null) {
+            instance = new ConnexionServer();
+        }
+        return instance;
+    }
+
     public void startClient() {
         try {
-            String hostName = InetAddress.getLocalHost().getHostName();
-            socket = new Socket(hostName, 8189);
+            if (socket == null || socket.isClosed()) {
+                String hostName = InetAddress.getLocalHost().getHostName();
+                socket = new Socket(hostName, 8189);
 
-            outStream = new ObjectOutputStream(socket.getOutputStream());
-            inStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                outStream = new ObjectOutputStream(socket.getOutputStream());
+                inStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            String welcomeMessage = inStream.readLine();
-            System.out.println("Server says: " + welcomeMessage);
+                String welcomeMessage = inStream.readLine();
+                System.out.println("Server says: " + welcomeMessage);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
     public boolean sendEmail(Email email) {
         try {
@@ -83,11 +100,11 @@ public class ConnexionServer {
         return emails;
     }
 
-
     public void closeClientConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
+                System.out.println("Connexion fermée.");
             }
         } catch (IOException e) {
             e.printStackTrace();

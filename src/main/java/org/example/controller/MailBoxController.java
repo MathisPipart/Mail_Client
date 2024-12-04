@@ -47,7 +47,7 @@ public class MailBoxController {
 
     private Email currentMail;
 
-    ConnexionServer connexionServer = new ConnexionServer();
+    ConnexionServer connexionServer = ConnexionServer.getInstance();;
 
     public void setUser(User user) {
         this.user = user;

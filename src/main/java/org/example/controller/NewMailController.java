@@ -25,7 +25,7 @@ public class NewMailController {
     @FXML
     private Button sendButton;
 
-    private ConnexionServer connexionServer = new ConnexionServer();
+    private ConnexionServer connexionServer = ConnexionServer.getInstance();
 
     public Label getMailName() {
         return mailName;

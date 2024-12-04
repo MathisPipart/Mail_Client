@@ -29,7 +29,7 @@ public class MailClientApplication extends Application {
 
         // Exécuter la connexion au serveur dans un thread séparé
         Thread connectionThread = new Thread(() -> {
-            ConnexionServer connexionServer = new ConnexionServer();
+            ConnexionServer connexionServer = ConnexionServer.getInstance();
             connexionServer.startClient();
         });
 
