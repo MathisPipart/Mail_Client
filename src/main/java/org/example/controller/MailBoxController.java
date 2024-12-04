@@ -47,14 +47,27 @@ public class MailBoxController {
 
     private Email currentMail;
 
+    ConnexionServer connexionServer = new ConnexionServer();
+
     public void setUser(User user) {
         this.user = user;
 
         // Configurer l'affichage pour l'utilisateur
         mailName.setText(user.getEmail());
-        addMail(); //fictif
+
+        // Récupérer les emails pour l'utilisateur depuis le serveur
+        List<Email> retrievedEmails = connexionServer.retrieveEmails(user.getEmail());
+
+        // Ajouter les emails récupérés à la MailBox de l'utilisateur
+        if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
+            user.getMailBox().getEmails().setAll(retrievedEmails); // Mise à jour complète
+        }
+
+        // Mettre à jour la table avec les emails de la MailBox
         emailTable.setItems(user.getMailBox().getEmails());
     }
+
+
 
     @FXML
     public void initialize() {

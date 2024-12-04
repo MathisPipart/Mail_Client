@@ -5,74 +5,89 @@ import org.example.model.Email;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ConnexionServer {
     private Socket socket;
     private ObjectOutputStream outStream;
     private BufferedReader inStream;
 
-    // Méthode pour démarrer le client et établir la connexion au serveur
     public void startClient() {
         try {
             String hostName = InetAddress.getLocalHost().getHostName();
-            System.out.println("Host name: " + hostName);
             socket = new Socket(hostName, 8189);
 
-            System.out.println("Connected to the server.\n");
-
-            // Initialiser les flux
             outStream = new ObjectOutputStream(socket.getOutputStream());
             inStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            // Lire le message initial du serveur
-            String line = inStream.readLine();
-            System.out.println("Server says: " + line);
-
+            String welcomeMessage = inStream.readLine();
+            System.out.println("Server says: " + welcomeMessage);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // Méthode pour envoyer un email au serveur
+
     public boolean sendEmail(Email email) {
         try {
             if (socket == null || socket.isClosed()) {
-                System.out.println("Socket is not connected. Attempting to reconnect...");
                 startClient();
             }
 
             outStream.writeObject(email);
             outStream.flush();
-            System.out.println("Email sent to server: " + email);
 
-            // Lire la réponse du serveur
             String response = inStream.readLine();
-            System.out.println("Server response: " + response);
-
-            if (response.startsWith("Mail received successfully with ID: ")) {
-                int emailId = Integer.parseInt(response.replace("Mail received successfully with ID: ", ""));
-                System.out.println("Email successfully sent with ID: " + emailId);
-                return true;
-            }
-
-            return false;
-
+            return response.startsWith("Mail received successfully with ID:");
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
     }
 
+    public List<Email> retrieveEmails(String userEmail) {
+        List<Email> emails = new ArrayList<>();
+
+        try {
+            if (socket == null || socket.isClosed()) {
+                startClient();
+            }
+
+            outStream.writeObject("RETRIEVE_MAILS:" + userEmail);
+            outStream.flush();
+
+            String line;
+            while ((line = inStream.readLine()) != null) {
+                if (line.equals("END_OF_MAILS")) {
+                    break;
+                }
+
+                String[] parts = line.split(";");
+                Email email = new Email(
+                        Integer.parseInt(parts[0]), // ID
+                        parts[1],                   // Expéditeur
+                        Arrays.asList(parts[2].split(",")), // Destinataires
+                        parts[3],                   // Sujet
+                        parts[4],                   // Contenu
+                        LocalDateTime.parse(parts[5]) // Timestamp
+                );
+                emails.add(email);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return emails;
+    }
 
 
-    // Méthode pour fermer proprement la connexion avec le serveur
     public void closeClientConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
-                outStream.close();
-                inStream.close();
                 socket.close();
-                System.out.println("Client connection closed.");
             }
         } catch (IOException e) {
             e.printStackTrace();
