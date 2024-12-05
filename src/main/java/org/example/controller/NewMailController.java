@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.model.Email;
+import org.example.model.User;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -26,6 +27,12 @@ public class NewMailController {
     private Button sendButton;
 
     private ConnexionServer connexionServer = ConnexionServer.getInstance();
+
+    User currentUser;
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
 
     public Label getMailName() {
         return mailName;
@@ -83,7 +90,7 @@ public class NewMailController {
         );
 
         // Envoyer l'email via ConnexionServer
-        boolean success = connexionServer.sendEmail(email);
+        boolean success = connexionServer.sendEmail(currentUser, email);
 
         if (success) {
             // Fermer la fenêtre

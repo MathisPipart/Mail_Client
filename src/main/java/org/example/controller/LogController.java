@@ -36,6 +36,15 @@ public class LogController {
         User currentUser = new User(mailName);
         mailBoxController.setUser(currentUser);
 
+        // Exécuter la connexion au serveur dans un thread séparé
+        Thread connectionThread = new Thread(() -> {
+            ConnexionServer connexionServer = ConnexionServer.getInstance();
+            connexionServer.startClient(currentUser);
+        });
+
+        connectionThread.setDaemon(true); // Le thread s'arrête automatiquement lorsque l'application se ferme
+        connectionThread.start();
+
         Stage stage = new Stage();
         stage.setTitle("Mail");
         stage.setScene(scene);

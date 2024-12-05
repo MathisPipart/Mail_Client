@@ -26,15 +26,6 @@ public class MailClientApplication extends Application {
         logStage.setTitle("Mail");
         logStage.setScene(scene);
         logStage.show();
-
-        // Exécuter la connexion au serveur dans un thread séparé
-        Thread connectionThread = new Thread(() -> {
-            ConnexionServer connexionServer = ConnexionServer.getInstance();
-            connexionServer.startClient();
-        });
-
-        connectionThread.setDaemon(true); // Le thread s'arrête automatiquement lorsque l'application se ferme
-        connectionThread.start();
     }
 
 

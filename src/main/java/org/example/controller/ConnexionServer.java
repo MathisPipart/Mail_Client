@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import org.example.model.Email;
+import org.example.model.User;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -31,7 +32,7 @@ public class ConnexionServer {
         return instance;
     }
 
-    public void startClient() {
+    public void startClient(User user) {
         try {
             if (socket == null || socket.isClosed()) {
                 String hostName = InetAddress.getLocalHost().getHostName();
@@ -48,10 +49,10 @@ public class ConnexionServer {
         }
     }
 
-    public boolean sendEmail(Email email) {
+    public boolean sendEmail(User user, Email email) {
         try {
             if (socket == null || socket.isClosed()) {
-                startClient();
+                startClient(user);
             }
 
             outStream.writeObject(email);
@@ -65,15 +66,15 @@ public class ConnexionServer {
         }
     }
 
-    public List<Email> retrieveEmails(String userEmail) {
+    public List<Email> retrieveEmails(User user) {
         List<Email> emails = new ArrayList<>();
 
         try {
             if (socket == null || socket.isClosed()) {
-                startClient();
+                startClient(user);
             }
 
-            outStream.writeObject("RETRIEVE_MAILS:" + userEmail);
+            outStream.writeObject("RETRIEVE_MAILS:" + user.getEmail());
             outStream.flush();
 
             String line;

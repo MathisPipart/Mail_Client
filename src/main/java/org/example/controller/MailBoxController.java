@@ -56,7 +56,7 @@ public class MailBoxController {
         mailName.setText(user.getEmail());
 
         // Récupérer les emails pour l'utilisateur depuis le serveur
-        List<Email> retrievedEmails = connexionServer.retrieveEmails(user.getEmail());
+        List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
 
         // Ajouter les emails récupérés à la MailBox de l'utilisateur
         if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
@@ -84,6 +84,7 @@ public class MailBoxController {
         Scene scene = new Scene(fxmlLoader.load(), 598, 488);
 
         NewMailController controller = fxmlLoader.getController();
+        controller.setCurrentUser(user);
         controller.setUserMail(user.getEmail());
 
         Stage newMailStage = new Stage();
