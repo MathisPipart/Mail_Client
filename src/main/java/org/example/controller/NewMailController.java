@@ -103,7 +103,7 @@ public class NewMailController {
             // Fermer la fenêtre
             Stage stageNewMail = (Stage) sendTo.getScene().getWindow();
             stageNewMail.close();
-            mailBoxController.updateList();
+            //mailBoxController.updateList();
         } else {
             showAlert("Error", "Failed to send mail. Please try again.");
         }

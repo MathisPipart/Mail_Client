@@ -74,7 +74,7 @@ public class MailBoxController {
 
     public void updateList() {
         new Thread(() -> {
-            //while (true) { // Si une gestion d'arrêt est requise, ajoute une condition pour sortir de la boucle
+            while (true) { // Si une gestion d'arrêt est requise, ajoute une condition pour sortir de la boucle
                 try {
                     // Récupérer les emails pour l'utilisateur depuis le serveur
                     List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
@@ -96,9 +96,9 @@ public class MailBoxController {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    //break; // Sortir du thread si interruption
+                    break; // Sortir du thread si interruption
                 }
-            //}
+            }
         }).start();
     }
 
