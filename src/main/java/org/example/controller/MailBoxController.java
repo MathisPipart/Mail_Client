@@ -79,10 +79,15 @@ public class MailBoxController {
                     // Récupérer les emails pour l'utilisateur depuis le serveur
                     List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
 
+                    // Trier les emails par ordre décroissant de date
+                    if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
+                        retrievedEmails.sort((email1, email2) -> email2.getTimestamp().compareTo(email1.getTimestamp()));
+                    }
+
                     // Mettre à jour la table dans l'interface utilisateur
                     Platform.runLater(() -> {
                         if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
-                            user.getMailBox().getEmails().setAll(retrievedEmails); // Mise à jour complète
+                            user.getMailBox().getEmails().setAll(retrievedEmails); // Mise à jour complète triée
                             emailTable.setItems(user.getMailBox().getEmails()); // Mettre à jour la table
                         }
                     });
@@ -95,21 +100,6 @@ public class MailBoxController {
                 }
             //}
         }).start();
-    }
-
-
-    public void updateEmailTable(List<Email> newEmails) {
-        if (newEmails != null && !newEmails.isEmpty()) {
-            // Ajouter les nouveaux emails sans créer de doublons
-            for (Email email : newEmails) {
-                if (!user.getMailBox().getEmails().contains(email)) {
-                    user.getMailBox().getEmails().add(email);
-                }
-            }
-
-            // Rafraîchir la table
-            emailTable.refresh();
-        }
     }
 
 
