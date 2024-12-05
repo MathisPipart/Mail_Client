@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -65,8 +66,51 @@ public class MailBoxController {
 
         // Mettre à jour la table avec les emails de la MailBox
         emailTable.setItems(user.getMailBox().getEmails());
+
+
+        // Démarrer le polling pour vérifier les nouveaux emails
+        updateList();
     }
 
+    private void updateList() {
+        new Thread(() -> {
+            while (true) { // Si une gestion d'arrêt est requise, ajoute une condition pour sortir de la boucle
+                try {
+                    // Récupérer les emails pour l'utilisateur depuis le serveur
+                    List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
+
+                    // Mettre à jour la table dans l'interface utilisateur
+                    Platform.runLater(() -> {
+                        if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
+                            user.getMailBox().getEmails().setAll(retrievedEmails); // Mise à jour complète
+                            emailTable.setItems(user.getMailBox().getEmails()); // Mettre à jour la table
+                        }
+                    });
+
+                    // Attendre 5 secondes avant de relancer la récupération
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break; // Sortir du thread si interruption
+                }
+            }
+        }).start();
+    }
+
+
+    public void updateEmailTable(List<Email> newEmails) {
+        if (newEmails != null && !newEmails.isEmpty()) {
+            // Ajouter les nouveaux emails sans créer de doublons
+            for (Email email : newEmails) {
+                if (!user.getMailBox().getEmails().contains(email)) {
+                    user.getMailBox().getEmails().add(email);
+                }
+            }
+
+            // Rafraîchir la table
+            emailTable.refresh();
+        }
+    }
 
 
     @FXML

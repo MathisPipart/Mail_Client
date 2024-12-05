@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import javafx.application.Platform;
 import org.example.model.Email;
 import org.example.model.User;
 
@@ -20,6 +21,8 @@ public class ConnexionServer {
     private ObjectOutputStream outStream;
     private BufferedReader inStream;
 
+    private volatile boolean listening = false;
+
     // Constructeur privé pour empêcher l'instanciation directe
     private ConnexionServer() {
     }
@@ -35,6 +38,8 @@ public class ConnexionServer {
     public void startClient(User user) {
         try {
             if (socket == null || socket.isClosed()) {
+                listening = true; // Activer l'écoute
+
                 String hostName = InetAddress.getLocalHost().getHostName();
                 socket = new Socket(hostName, 8189);
 
