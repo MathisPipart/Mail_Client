@@ -30,10 +30,6 @@ public class NewMailController {
 
     User currentUser;
 
-    public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
-    }
-
     public Label getMailName() {
         return mailName;
     }
@@ -48,6 +44,11 @@ public class NewMailController {
 
     public TextArea getContent() {
         return content;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+        setUserMail(currentUser.getEmail());
     }
 
     public void setUserMail(String email) {

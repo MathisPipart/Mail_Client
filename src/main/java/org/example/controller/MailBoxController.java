@@ -85,7 +85,6 @@ public class MailBoxController {
 
         NewMailController controller = fxmlLoader.getController();
         controller.setCurrentUser(user);
-        controller.setUserMail(user.getEmail());
 
         Stage newMailStage = new Stage();
         newMailStage.setTitle("New Mail");
