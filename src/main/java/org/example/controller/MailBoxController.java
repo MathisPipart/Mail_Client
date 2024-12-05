@@ -72,9 +72,9 @@ public class MailBoxController {
         updateList();
     }
 
-    private void updateList() {
+    public void updateList() {
         new Thread(() -> {
-            while (true) { // Si une gestion d'arrêt est requise, ajoute une condition pour sortir de la boucle
+            //while (true) { // Si une gestion d'arrêt est requise, ajoute une condition pour sortir de la boucle
                 try {
                     // Récupérer les emails pour l'utilisateur depuis le serveur
                     List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
@@ -91,9 +91,9 @@ public class MailBoxController {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    break; // Sortir du thread si interruption
+                    //break; // Sortir du thread si interruption
                 }
-            }
+            //}
         }).start();
     }
 
@@ -129,6 +129,7 @@ public class MailBoxController {
 
         NewMailController controller = fxmlLoader.getController();
         controller.setCurrentUser(user);
+        controller.setMailBoxController(this);
 
         Stage newMailStage = new Stage();
         newMailStage.setTitle("New Mail");

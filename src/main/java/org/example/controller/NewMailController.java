@@ -28,6 +28,8 @@ public class NewMailController {
 
     private ConnexionServer connexionServer = ConnexionServer.getInstance();
 
+    MailBoxController mailBoxController;
+
     User currentUser;
 
     public Label getMailName() {
@@ -67,6 +69,10 @@ public class NewMailController {
         this.content.setText(content);
     }
 
+    public void setMailBoxController(MailBoxController mailBoxController) {
+        this.mailBoxController = mailBoxController;
+    }
+
     @FXML
     private void initialize() {
         sendButton.setOnMouseEntered(event -> sendButton.setStyle("-fx-cursor: hand;"));
@@ -97,6 +103,7 @@ public class NewMailController {
             // Fermer la fenêtre
             Stage stageNewMail = (Stage) sendTo.getScene().getWindow();
             stageNewMail.close();
+            mailBoxController.updateList();
         } else {
             showAlert("Error", "Failed to send mail. Please try again.");
         }

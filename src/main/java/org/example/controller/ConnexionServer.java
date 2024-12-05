@@ -2,6 +2,7 @@ package org.example.controller;
 
 import javafx.application.Platform;
 import org.example.model.Email;
+import org.example.model.MailBox;
 import org.example.model.User;
 
 import java.io.*;
@@ -15,6 +16,12 @@ import java.util.List;
 public class ConnexionServer {
     // Instance unique de Singleton
     private static ConnexionServer instance;
+
+    MailBoxController mailBoxController;
+
+    public void setMailBoxController(MailBoxController mailBoxController) {
+        this.mailBoxController = mailBoxController;
+    }
 
     // Variables de connexion
     private Socket socket;

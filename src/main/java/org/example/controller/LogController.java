@@ -40,6 +40,7 @@ public class LogController {
         Thread connectionThread = new Thread(() -> {
             ConnexionServer connexionServer = ConnexionServer.getInstance();
             connexionServer.startClient(currentUser);
+            connexionServer.setMailBoxController(mailBoxController);
         });
 
         connectionThread.setDaemon(true); // Le thread s'arrête automatiquement lorsque l'application se ferme
