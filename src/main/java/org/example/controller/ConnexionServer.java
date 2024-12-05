@@ -43,11 +43,16 @@ public class ConnexionServer {
 
                 String welcomeMessage = inStream.readLine();
                 System.out.println("Server says: " + welcomeMessage);
+
+                // Envoyer l'objet User au serveur
+                outStream.writeObject(user);
+                outStream.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     public boolean sendEmail(User user, Email email) {
         try {
@@ -59,47 +64,75 @@ public class ConnexionServer {
             outStream.flush();
 
             String response = inStream.readLine();
-            return response.startsWith("Mail received successfully with ID:");
+            System.out.println("Server response: " + response);
+            return response != null && response.startsWith("Mail received successfully with ID:");
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
     }
 
+
     public List<Email> retrieveEmails(User user) {
-        List<Email> emails = new ArrayList<>();
+        List<Email> retrievedEmails = new ArrayList<>();
 
         try {
             if (socket == null || socket.isClosed()) {
-                startClient(user);
+                startClient(user); // S'assurer que le client est connecté
             }
 
+            // Envoyer la commande pour récupérer les emails
             outStream.writeObject("RETRIEVE_MAILS:" + user.getEmail());
             outStream.flush();
 
+            // Lire les emails envoyés par le serveur
             String line;
             while ((line = inStream.readLine()) != null) {
                 if (line.equals("END_OF_MAILS")) {
-                    break;
+                    break; // Fin de la liste des emails
                 }
 
-                String[] parts = line.split(";");
-                Email email = new Email(
-                        Integer.parseInt(parts[0]), // ID
-                        parts[1],                   // Expéditeur
-                        Arrays.asList(parts[2].split(",")), // Destinataires
-                        parts[3],                   // Sujet
-                        parts[4],                   // Contenu
-                        LocalDateTime.parse(parts[5]) // Timestamp
-                );
-                emails.add(email);
+                if (line.startsWith("Mail:")) {
+                    String emailData = line.substring(5); // Supprimer "Mail:"
+
+                    // Vérifier si emailData est vide
+                    if (emailData.isBlank()) {
+                        System.out.println("Aucun email pour l'utilisateur : " + user.getEmail());
+                        continue;
+                    }
+
+                    // Diviser les données de l'email
+                    try {
+                        String[] parts = emailData.split(",");
+
+                        Email email = new Email(
+                                Integer.parseInt(parts[0]),                // ID
+                                parts[1],                                  // Expéditeur
+                                Arrays.asList(parts[2].split(";")),        // Destinataires (séparés par des ;)
+                                parts[3],                                  // Sujet
+                                parts[4],                                  // Contenu
+                                LocalDateTime.parse(parts[5])              // Timestamp
+                        );
+
+                        retrievedEmails.add(email); // Ajouter à la liste des emails
+                    } catch (Exception e) {
+                        System.err.println("Erreur lors de l'analyse de l'email: " + emailData);
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.out.println("Message serveur : " + line);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return emails;
+        return retrievedEmails; // Retourner la liste des emails
     }
+
+
+
+
 
     public void closeClientConnection() {
         try {
