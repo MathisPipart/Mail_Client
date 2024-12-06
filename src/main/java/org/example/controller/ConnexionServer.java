@@ -6,8 +6,10 @@ import org.example.model.MailBox;
 import org.example.model.User;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +30,7 @@ public class ConnexionServer {
     private ObjectOutputStream outStream;
     private BufferedReader inStream;
 
-    private volatile boolean listening = false;
+    private boolean connected = false;
 
     // Constructeur privé pour empêcher l'instanciation directe
     private ConnexionServer() {
@@ -44,14 +46,15 @@ public class ConnexionServer {
 
     public void startClient(User user) {
         try {
-            if (socket == null || socket.isClosed()) {
-                listening = true; // Activer l'écoute
-
+            if (!isConnected()) { // Connecter seulement si le client n'est pas déjà connecté
                 String hostName = InetAddress.getLocalHost().getHostName();
-                socket = new Socket(hostName, 8189);
 
+                // Tenter de se connecter au serveur
+                socket = new Socket(hostName, 8189);
                 outStream = new ObjectOutputStream(socket.getOutputStream());
                 inStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                connected = true; // Mise à jour de l'état
 
                 String welcomeMessage = inStream.readLine();
                 System.out.println("Server says: " + welcomeMessage);
@@ -60,15 +63,21 @@ public class ConnexionServer {
                 outStream.writeObject(user);
                 outStream.flush();
             }
+        } catch (ConnectException e) {
+            System.err.println("Erreur : Impossible de se connecter au serveur. Vérifiez si le serveur est actif.");
+            connected = false; // Mettre l'état à "non connecté"
+        } catch (SocketException e) {
+            System.err.println("Connexion interrompue : " + e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Erreur d'E/S lors de la connexion : " + e.getMessage());
         }
     }
 
 
+
     public boolean sendEmail(User user, Email email) {
         try {
-            if (socket == null || socket.isClosed()) {
+            if (!isConnected()) {
                 startClient(user);
             }
 
@@ -79,6 +88,7 @@ public class ConnexionServer {
             System.out.println("Server response: " + response);
             return response != null && response.startsWith("Mail received successfully with ID:");
         } catch (IOException e) {
+            connected = false;
             e.printStackTrace();
             return false;
         }
@@ -89,8 +99,13 @@ public class ConnexionServer {
         List<Email> retrievedEmails = new ArrayList<>();
 
         try {
-            if (socket == null || socket.isClosed()) {
-                startClient(user); // S'assurer que le client est connecté
+            if (!isConnected()) {
+                startClient(user); // Tenter de se reconnecter
+            }
+
+            // Vérification supplémentaire avant d'envoyer des données
+            if (outStream == null || inStream == null) {
+                throw new IllegalStateException("Flux non initialisés. Connexion invalide.");
             }
 
             // Envoyer la commande pour récupérer les emails
@@ -105,43 +120,44 @@ public class ConnexionServer {
                 }
 
                 if (line.startsWith("Mail:")) {
-                    String emailData = line.substring(5); // Supprimer "Mail:"
-
-                    // Vérifier si emailData est vide
-                    if (emailData.isBlank()) {
-                        System.out.println("Aucun email pour l'utilisateur : " + user.getEmail());
-                        continue;
-                    }
-
-                    // Diviser les données de l'email
-                    try {
+                    String emailData = line.substring(5);
+                    if (!emailData.isBlank()) {
                         String[] parts = emailData.split(",");
-
                         Email email = new Email(
-                                Integer.parseInt(parts[0]),                // ID
-                                parts[1],                                  // Expéditeur
-                                Arrays.asList(parts[2].split(";")),        // Destinataires (séparés par des ;)
-                                parts[3],                                  // Sujet
-                                parts[4],                                  // Contenu
-                                LocalDateTime.parse(parts[5])              // Timestamp
+                                Integer.parseInt(parts[0]), // ID
+                                parts[1], // Expéditeur
+                                Arrays.asList(parts[2].split(";")), // Destinataires
+                                parts[3], // Sujet
+                                parts[4], // Contenu
+                                LocalDateTime.parse(parts[5]) // Timestamp
                         );
-
-                        retrievedEmails.add(email); // Ajouter à la liste des emails
-                    } catch (Exception e) {
-                        System.err.println("Erreur lors de l'analyse de l'email: " + emailData);
-                        e.printStackTrace();
+                        retrievedEmails.add(email);
                     }
-                } else {
-                    System.out.println("Message serveur : " + line);
                 }
             }
+        } catch (SocketException e) {
+            System.err.println("Connexion interrompue : " + e.getMessage());
+            connected = false; // Mettre à jour l'état de connexion
         } catch (IOException e) {
+            System.err.println("Erreur d'entrée/sortie : " + e.getMessage());
+            connected = false;
+        } catch (Exception e) {
+            System.err.println("Erreur inattendue : " + e.getMessage());
             e.printStackTrace();
         }
 
-        return retrievedEmails; // Retourner la liste des emails
+        return retrievedEmails;
     }
 
+
+
+    public boolean isConnected() {
+        try {
+            return socket != null && !socket.isClosed() && connected && socket.isConnected();
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
 
 
@@ -150,6 +166,7 @@ public class ConnexionServer {
         try {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
+                connected = false;
                 System.out.println("Connexion fermée.");
             }
         } catch (IOException e) {

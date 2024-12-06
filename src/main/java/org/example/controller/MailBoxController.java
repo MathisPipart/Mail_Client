@@ -76,6 +76,8 @@ public class MailBoxController {
         new Thread(() -> {
             while (true) { // Si une gestion d'arrêt est requise, ajoute une condition pour sortir de la boucle
                 try {
+                    updateConnexionLabel();
+
                     // Récupérer les emails pour l'utilisateur depuis le serveur
                     List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
 
@@ -100,6 +102,17 @@ public class MailBoxController {
                 }
             }
         }).start();
+    }
+
+    public void updateConnexionLabel(){
+        boolean isConnected = connexionServer.isConnected();
+        String newLabelState = isConnected ? "Connected" : "Not Connected";
+
+        if (!newLabelState.equals(connectedLabel.getText())) {
+            Platform.runLater(() -> {
+                connectedLabel.setText(newLabelState);
+            });
+        }
     }
 
 
