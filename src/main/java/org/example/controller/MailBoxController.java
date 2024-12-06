@@ -351,6 +351,7 @@ public class MailBoxController {
         }
 
         if(! user.getMailBox().getEmails().isEmpty()){
+            connexionServer.deleteEmail(user, currentMail.getId());
             user.getMailBox().deleteEmail(currentMail);
         }
         else {

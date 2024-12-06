@@ -160,6 +160,27 @@ public class ConnexionServer {
     }
 
 
+    public boolean deleteEmail(User user, int emailId) {
+        try {
+            if (!isConnected()) {
+                startClient(user);
+            }
+
+            String command = "DELETE_MAIL:" + user.getEmail() + "," + emailId;
+            outStream.writeObject(command);
+            outStream.flush();
+
+            String response = inStream.readLine();
+            System.out.println("Server response: " + response);
+            return response != null && response.equals("Mail deleted successfully.");
+        } catch (IOException e) {
+            connected = false;
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 
 
     public void closeClientConnection() {
