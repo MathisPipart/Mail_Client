@@ -44,34 +44,60 @@ public class ConnexionServer {
         return instance;
     }
 
-    public void startClient(User user) {
+    public boolean startClient(User user) {
         try {
-            if (!isConnected()) { // Connecter seulement si le client n'est pas déjà connecté
+            if (!isConnected()) {
                 String hostName = InetAddress.getLocalHost().getHostName();
-
-                // Tenter de se connecter au serveur
                 socket = new Socket(hostName, 8189);
                 outStream = new ObjectOutputStream(socket.getOutputStream());
                 inStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                connected = true; // Mise à jour de l'état
+                connected = true;
 
+                // Lire le message de bienvenue
                 String welcomeMessage = inStream.readLine();
                 System.out.println("Server says: " + welcomeMessage);
 
-                // Envoyer l'objet User au serveur
+                // Envoyer l'utilisateur
                 outStream.writeObject(user);
                 outStream.flush();
+
+                // Lire la réponse concernant l'utilisateur
+                String response = inStream.readLine();
+                if (response != null) {
+                    if (response.startsWith("Error:")) {
+                        // L'utilisateur n'existe pas, on ferme la connexion et on retourne false
+                        System.err.println("Erreur côté serveur : " + response);
+                        closeClientConnection();
+                        return false;
+                    } else if (response.startsWith("User connected successfully.")) {
+                        // L'utilisateur existe, connexion établie
+                        System.out.println("L'utilisateur est connecté avec succès.");
+                        return true;
+                    } else {
+                        // Réponse inattendue
+                        System.err.println("Réponse inattendue du serveur : " + response);
+                        closeClientConnection();
+                        return false;
+                    }
+                } else {
+                    closeClientConnection();
+                    return false;
+                }
             }
+            return true;
         } catch (ConnectException e) {
-            System.err.println("Erreur : Impossible de se connecter au serveur. Vérifiez si le serveur est actif.");
-            connected = false; // Mettre l'état à "non connecté"
-        } catch (SocketException e) {
-            System.err.println("Connexion interrompue : " + e.getMessage());
+            System.err.println("Erreur : Impossible de se connecter au serveur.");
+            connected = false;
+            return false;
         } catch (IOException e) {
             System.err.println("Erreur d'E/S lors de la connexion : " + e.getMessage());
+            connected = false;
+            return false;
         }
     }
+
+
 
 
 
@@ -179,6 +205,35 @@ public class ConnexionServer {
             return false;
         }
     }
+
+    public boolean checkUserExists(User currentUser, String emailToCheck) {
+        try {
+            if (!isConnected()) {
+                // (Re)connexion si nécessaire
+                startClient(currentUser);
+            }
+
+            // Envoyer la commande de vérification
+            outStream.writeObject("CHECK_USER:" + emailToCheck);
+            outStream.flush();
+
+            // Lire la réponse
+            String response = inStream.readLine();
+            if (response != null) {
+                if (response.startsWith("User exists")) {
+                    return true;
+                } else if (response.startsWith("Error: User does not exist")) {
+                    return false;
+                }
+            }
+            return false;
+        } catch (IOException e) {
+            connected = false;
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
 
 

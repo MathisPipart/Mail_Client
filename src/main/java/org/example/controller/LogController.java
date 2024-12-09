@@ -9,7 +9,6 @@ import org.example.MailClientApplication;
 import org.example.model.User;
 
 import java.util.regex.Pattern;
-
 public class LogController {
     private Stage logStage;
 
@@ -28,23 +27,27 @@ public class LogController {
             return;
         }
 
+        User currentUser = new User(mailName);
+        ConnexionServer connexionServer = ConnexionServer.getInstance();
+
+        // Tentative de connexion au serveur (en mode synchrone ici)
+        boolean connected = connexionServer.startClient(currentUser);
+
+        if (!connected) {
+            // L'utilisateur n'est pas reconnu par le serveur
+            showAlertUserNotFound();
+            return; // On stoppe ici, on n'ouvre pas la MailBox
+        }
+
+        // Si on est arrivé ici, c'est que le serveur reconnait l'utilisateur
+
         FXMLLoader fxmlLoader = new FXMLLoader(MailClientApplication.class.getResource("mailBox-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1000, 800);
-
         MailBoxController mailBoxController = fxmlLoader.getController();
-        //Pass the login mail to the mail box
-        User currentUser = new User(mailName);
         mailBoxController.setUser(currentUser);
 
-        // Exécuter la connexion au serveur dans un thread séparé
-        Thread connectionThread = new Thread(() -> {
-            ConnexionServer connexionServer = ConnexionServer.getInstance();
-            connexionServer.startClient(currentUser);
-            connexionServer.setMailBoxController(mailBoxController);
-        });
-
-        connectionThread.setDaemon(true); // Le thread s'arrête automatiquement lorsque l'application se ferme
-        connectionThread.start();
+        // On associe le mailBoxController au ConnexionServer pour les mails, etc.
+        connexionServer.setMailBoxController(mailBoxController);
 
         Stage stage = new Stage();
         stage.setTitle("Mail");
@@ -63,5 +66,13 @@ public class LogController {
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         return Pattern.matches(emailRegex, email);
+    }
+
+    private void showAlertUserNotFound() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Utilisateur non reconnu");
+        alert.setHeaderText(null);
+        alert.setContentText("L'utilisateur n'est pas connu du serveur. Veuillez vérifier votre adresse.");
+        alert.showAndWait();
     }
 }

@@ -86,14 +86,25 @@ public class NewMailController {
             return;
         }
 
+        // Vérifier l'existence des destinataires
+        String[] recipients = sendTo.getText().split("\\s*;\\s*");
+        for (String recipient : recipients) {
+            boolean userExists = connexionServer.checkUserExists(currentUser, recipient);
+            if (!userExists) {
+                // Afficher une alerte
+                showAlert("User Not Found", "The user " + recipient + " does not exist on the server.");
+                return; // Ne pas continuer l'envoi
+            }
+        }
+
         // Créer l'objet Email
         Email email = new Email(
-                0, // ID par défaut pour indiquer qu'il sera généré côté serveur
-                mailName.getText(), // Expéditeur
-                Arrays.asList(sendTo.getText().split("\\s*;\\s*")), // Destinataires
-                subject.getText(), // Sujet
-                content.getText(), // Contenu
-                LocalDateTime.now() // Timestamp
+                0,
+                mailName.getText(),
+                Arrays.asList(recipients),
+                subject.getText(),
+                content.getText(),
+                LocalDateTime.now()
         );
 
         // Envoyer l'email via ConnexionServer
@@ -103,11 +114,11 @@ public class NewMailController {
             // Fermer la fenêtre
             Stage stageNewMail = (Stage) sendTo.getScene().getWindow();
             stageNewMail.close();
-            //mailBoxController.updateList();
         } else {
             showAlert("Error", "Failed to send mail. Please try again.");
         }
     }
+
 
     private boolean areFieldsValid() {
         if (sendTo.getText().isEmpty() || subject.getText().isEmpty() || content.getText().isEmpty()) {
