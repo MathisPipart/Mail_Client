@@ -148,15 +148,16 @@ public class ConnexionServer {
                 if (line.startsWith("Mail:")) {
                     String emailData = line.substring(5);
                     if (!emailData.isBlank()) {
-                        String[] parts = emailData.split(",");
+                        String[] parts = emailData.split("\\|");
                         Email email = new Email(
-                                Integer.parseInt(parts[0]), // ID
-                                parts[1], // Expéditeur
-                                Arrays.asList(parts[2].split(";")), // Destinataires
-                                parts[3], // Sujet
-                                parts[4], // Contenu
-                                LocalDateTime.parse(parts[5]) // Timestamp
+                                Integer.parseInt(parts[0]),
+                                parts[1],
+                                Arrays.asList(parts[2].split(";")),
+                                parts[3],
+                                parts[4].replaceAll("\\\\n", "\n"), // si vous aviez remplacé les \n côté serveur
+                                LocalDateTime.parse(parts[5])
                         );
+
                         retrievedEmails.add(email);
                     }
                 }
