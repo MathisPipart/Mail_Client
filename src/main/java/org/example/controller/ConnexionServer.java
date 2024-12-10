@@ -236,6 +236,11 @@ public class ConnexionServer {
     public void closeClientConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
+                // Informer le serveur de la déconnexion
+                outStream.writeObject("DISCONNECT");
+                outStream.flush();
+
+                // Fermer la socket
                 socket.close();
                 connected = false;
                 System.out.println("Connexion fermée.");
@@ -244,4 +249,5 @@ public class ConnexionServer {
             e.printStackTrace();
         }
     }
+
 }

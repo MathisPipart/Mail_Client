@@ -49,6 +49,8 @@ public class MailBoxController {
     private Email currentMail;
 
     ConnexionServer connexionServer = ConnexionServer.getInstance();;
+    private volatile boolean keepUpdating = true;
+
 
     public void setUser(User user) {
         this.user = user;
@@ -74,7 +76,7 @@ public class MailBoxController {
 
     public void updateList() {
         new Thread(() -> {
-            while (true) { // Si une gestion d'arrêt est requise, ajoute une condition pour sortir de la boucle
+            while (keepUpdating) { // Si une gestion d'arrêt est requise, ajoute une condition pour sortir de la boucle
                 try {
                     updateConnexionLabel();
 
@@ -103,6 +105,11 @@ public class MailBoxController {
             }
         }).start();
     }
+
+    public void stopUpdating() {
+        keepUpdating = false; // Arrête la boucle
+    }
+
 
     public void updateConnexionLabel(){
         boolean isConnected = connexionServer.isConnected();

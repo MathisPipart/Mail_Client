@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -57,6 +58,12 @@ public class LogController {
         if (logStage != null) {
             logStage.close();
         }
+
+        stage.setOnCloseRequest(event -> {
+            mailBoxController.stopUpdating();
+            connexionServer.closeClientConnection();
+            Platform.exit();
+        });
     }
 
     public void setLogStage(Stage stage) {
