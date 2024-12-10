@@ -177,7 +177,6 @@ public class ConnexionServer {
     }
 
 
-
     public boolean isConnected() {
         try {
             return socket != null && !socket.isClosed() && connected && socket.isConnected();
@@ -207,6 +206,7 @@ public class ConnexionServer {
         }
     }
 
+
     public boolean checkUserExists(User currentUser, String emailToCheck) {
         try {
             if (!isConnected()) {
@@ -234,9 +234,6 @@ public class ConnexionServer {
             return false;
         }
     }
-
-
-
 
 
     public void closeClientConnection() {
