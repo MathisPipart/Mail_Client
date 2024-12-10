@@ -98,9 +98,6 @@ public class ConnexionServer {
     }
 
 
-
-
-
     public boolean sendEmail(User user, Email email) {
         try {
             if (!isConnected()) {

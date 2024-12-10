@@ -214,8 +214,12 @@ public class MailBoxController {
                     Label subjectLabel = new Label("Subject: " + email.getSubject());
                     subjectLabel.setStyle("-fx-font-weight: bold;");
 
-                    Label contentLabel = new Label(email.getContent());
+
+                    String content = email.getContent();
+                    String firstLine = content.contains("\n") ? content.substring(0, content.indexOf("\n")) : content;
+                    Label contentLabel = new Label(firstLine);
                     contentLabel.setStyle("-fx-text-fill: grey;");
+
 
                     Button deleteButton = new Button("Delete");
                     deleteButton.setPrefWidth(50); // Set fixed button width
