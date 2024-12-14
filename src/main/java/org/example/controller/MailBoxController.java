@@ -1,6 +1,8 @@
 package org.example.controller;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -20,12 +22,15 @@ import org.example.model.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class MailBoxController {
     @FXML
     private TableView<Email> emailTable;
+
+    ObservableList<Email> emailList = FXCollections.observableArrayList();
 
     @FXML
     private TableColumn<Email, String> emailColumn;
@@ -67,43 +72,66 @@ public class MailBoxController {
         }
 
         // Mettre à jour la table avec les emails de la MailBox
-        emailTable.setItems(user.getMailBox().getEmails());
+        emailList.addAll(user.getMailBox().getEmails());
+        emailTable.setItems(emailList);
 
 
         // Démarrer le polling pour vérifier les nouveaux emails
-        updateList();
+        updateListLoop();
     }
 
-    public void updateList() {
+    public void updateListLoop() {
         new Thread(() -> {
             while (keepUpdating) { // Si une gestion d'arrêt est requise, ajoute une condition pour sortir de la boucle
                 try {
-                    updateConnexionLabel();
-
-                    // Récupérer les emails pour l'utilisateur depuis le serveur
-                    List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
-
-                    // Trier les emails par ordre décroissant de date
-                    if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
-                        retrievedEmails.sort((email1, email2) -> email2.getTimestamp().compareTo(email1.getTimestamp()));
-                    }
-
-                    // Mettre à jour la table dans l'interface utilisateur
-                    Platform.runLater(() -> {
-                        if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
-                            user.getMailBox().getEmails().setAll(retrievedEmails); // Mise à jour complète triée
-                            emailTable.setItems(user.getMailBox().getEmails()); // Mettre à jour la table
-                        }
-                    });
+                    this.updateList();
 
                     // Attendre 5 secondes avant de relancer la récupération
                     Thread.sleep(5000);
+
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break; // Sortir du thread si interruption
                 }
             }
-        }).start();
+            }).start();
+    }
+
+    public void updateList() {
+        updateConnexionLabel();
+
+        // Récupérer les emails pour l'utilisateur depuis le serveur
+        List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
+
+        // Trier les emails par ordre décroissant de date
+        if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
+            retrievedEmails.sort((email1, email2) -> email2.getTimestamp().compareTo(email1.getTimestamp()));
+        }
+
+        // Mettre à jour la table dans l'interface utilisateur
+        Platform.runLater(() -> {
+            if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
+                // Add to "emailList" items that are not already inserted in
+                retrievedEmails.forEach(e -> {
+                    if (!emailList.contains(e)) {
+                        emailList.addFirst(e);
+                    }
+                });
+
+                final List<Email> toRemove = new ArrayList<>();
+
+                emailList.forEach(e -> {
+                    System.out.println("email " + e.getId() + " read dans emaillist");
+
+                    if (!retrievedEmails.contains(e)) {
+                        System.out.println("email " + e.getId() + " not contained");
+                        toRemove.add(e);
+                    }
+                });
+
+                toRemove.forEach(e -> emailList.remove(e));
+            }
+        });
     }
 
     public void stopUpdating() {
@@ -364,6 +392,7 @@ public class MailBoxController {
         if(! user.getMailBox().getEmails().isEmpty()){
             connexionServer.deleteEmail(user, currentMail.getId());
             user.getMailBox().deleteEmail(currentMail);
+            this.updateList();
         }
         else {
             System.out.println("No mail to delete");
