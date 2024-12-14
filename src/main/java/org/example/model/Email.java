@@ -1,18 +1,20 @@
 package org.example.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-public class Email implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private int id;
-    private String sender;
-    private List<String> receiver;
-    private String subject;
-    private String content;
-    private LocalDateTime timestamp;
+public class Email implements Serializable, Comparable<Email>  {
+    @Serial
+    private final static long serialVersionUID = 1L;
+    private final int id;
+    private final String sender;
+    private final List<String> receiver;
+    private final String subject;
+    private final String content;
+    private final LocalDateTime timestamp;
 
     public Email(int id, String sender, List<String>  receiver, String subject, String content, LocalDateTime timestamp) {
         this.id = id;
@@ -23,7 +25,6 @@ public class Email implements Serializable {
         this.timestamp = timestamp;
     }
 
-    // Getters and setters
     public int getId() {
         return id;
     }
@@ -48,10 +49,6 @@ public class Email implements Serializable {
         return timestamp;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -65,6 +62,11 @@ public class Email implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(this.id); // Utilise les mêmes champs que dans equals
+    }
+
+    @Override
+    public int compareTo(Email other) {
+        return this.timestamp.compareTo(other.getTimestamp());
     }
 }
 

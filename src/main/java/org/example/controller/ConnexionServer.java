@@ -1,8 +1,6 @@
 package org.example.controller;
 
-import javafx.application.Platform;
 import org.example.model.Email;
-import org.example.model.MailBox;
 import org.example.model.User;
 import org.jetbrains.annotations.NotNull;
 
@@ -169,7 +167,7 @@ public class ConnexionServer {
     @NotNull
     private static Email getEmail(String emailData) {
         String[] parts = emailData.split(";");
-        Email email = new Email(
+        return new Email(
                 Integer.parseInt(parts[0]),
                 parts[1],
                 Arrays.asList(parts[2].split("\\|")),
@@ -177,7 +175,6 @@ public class ConnexionServer {
                 parts[4].replaceAll("\\\\n", "\n"), // si vous aviez remplacé les \n côté serveur
                 LocalDateTime.parse(parts[5])
         );
-        return email;
     }
 
 
