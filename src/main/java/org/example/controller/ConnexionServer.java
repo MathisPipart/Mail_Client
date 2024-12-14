@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import org.example.model.Email;
 import org.example.model.MailBox;
 import org.example.model.User;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.net.ConnectException;
@@ -145,15 +146,7 @@ public class ConnexionServer {
                 if (line.startsWith("Mail:")) {
                     String emailData = line.substring(5);
                     if (!emailData.isBlank()) {
-                        String[] parts = emailData.split("\\|");
-                        Email email = new Email(
-                                Integer.parseInt(parts[0]),
-                                parts[1],
-                                Arrays.asList(parts[2].split(";")),
-                                parts[3],
-                                parts[4].replaceAll("\\\\n", "\n"), // si vous aviez remplacé les \n côté serveur
-                                LocalDateTime.parse(parts[5])
-                        );
+                        Email email = getEmail(emailData);
 
                         retrievedEmails.add(email);
                     }
@@ -171,6 +164,20 @@ public class ConnexionServer {
         }
 
         return retrievedEmails;
+    }
+
+    @NotNull
+    private static Email getEmail(String emailData) {
+        String[] parts = emailData.split(";");
+        Email email = new Email(
+                Integer.parseInt(parts[0]),
+                parts[1],
+                Arrays.asList(parts[2].split("\\|")),
+                parts[3],
+                parts[4].replaceAll("\\\\n", "\n"), // si vous aviez remplacé les \n côté serveur
+                LocalDateTime.parse(parts[5])
+        );
+        return email;
     }
 
 

@@ -10,6 +10,7 @@ module org.example.mail_client {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires annotations;
 
     opens org.example to javafx.fxml;
     exports org.example;

@@ -121,10 +121,7 @@ public class MailBoxController {
                 final List<Email> toRemove = new ArrayList<>();
 
                 emailList.forEach(e -> {
-                    System.out.println("email " + e.getId() + " read dans emaillist");
-
                     if (!retrievedEmails.contains(e)) {
-                        System.out.println("email " + e.getId() + " not contained");
                         toRemove.add(e);
                     }
                 });
