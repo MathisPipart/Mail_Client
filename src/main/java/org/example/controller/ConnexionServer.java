@@ -156,12 +156,15 @@ public class ConnexionServer {
         } catch (SocketException e) {
             System.err.println("Connexion interrompue : " + e.getMessage());
             connected = false; // Mettre à jour l'état de connexion
+            return null;
         } catch (IOException e) {
             System.err.println("Erreur d'entrée/sortie : " + e.getMessage());
             connected = false;
+            return null;
         } catch (Exception e) {
             System.err.println("Erreur inattendue : " + e.getMessage());
             e.printStackTrace();
+            return null;
         }
 
         return retrievedEmails;

@@ -103,6 +103,10 @@ public class MailBoxController {
         // Récupérer les emails pour l'utilisateur depuis le serveur
         List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
 
+        if (!connexionServer.isConnected() || retrievedEmails == null) {
+            return;
+        }
+
         // Trier les emails par ordre décroissant de date
         if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
             retrievedEmails.sort((email1, email2) -> email2.getTimestamp().compareTo(email1.getTimestamp()));
