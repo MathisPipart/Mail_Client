@@ -147,6 +147,9 @@ public class ConnexionServer {
                         Email email = getEmail(emailData);
 
                         retrievedEmails.add(email);
+                        if (!user.getMailBox().getEmails().contains(email)) {
+                            user.getMailBox().addEmail(email);
+                        }
                     }
                 }
             }

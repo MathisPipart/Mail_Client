@@ -110,7 +110,7 @@ public class MailBoxController {
 
         // Mettre à jour la table dans l'interface utilisateur
         Platform.runLater(() -> {
-            if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
+            if (retrievedEmails != null) {
                 // Add to "emailList" items that are not already inserted in
                 retrievedEmails.forEach(e -> {
                     if (!emailList.contains(e)) {
@@ -382,11 +382,11 @@ public class MailBoxController {
 
     @FXML
     public void deleteMail(){
-        if(currentMail == null) {
+        if (currentMail == null) {
             System.out.println("No mail selected");
         }
 
-        if(! user.getMailBox().getEmails().isEmpty()){
+        if (!user.getMailBox().getEmails().isEmpty()){
             connexionServer.deleteEmail(user, currentMail.getId());
             user.getMailBox().deleteEmail(currentMail);
             this.updateList();
