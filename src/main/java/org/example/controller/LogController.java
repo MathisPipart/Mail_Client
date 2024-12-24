@@ -22,7 +22,6 @@ public class LogController {
     public void openMailBoxStage() throws Exception {
         String mailName = mailTextField.getText();
 
-        // mail syntax verification
         if (!isValidEmail(mailName)) {
             invalidMailLabel.setVisible(true);
             return;
@@ -30,24 +29,18 @@ public class LogController {
 
         User currentUser = new User(mailName);
         ConnexionServer connexionServer = ConnexionServer.getInstance();
-
-        // Tentative de connexion au serveur (en mode synchrone ici)
         boolean connected = connexionServer.startClient(currentUser);
 
         if (!connected) {
-            // L'utilisateur n'est pas reconnu par le serveur
             showAlertUserNotFound();
-            return; // On stoppe ici, on n'ouvre pas la MailBox
+            return;
         }
-
-        // Si on est arrivé ici, c'est que le serveur reconnait l'utilisateur
 
         FXMLLoader fxmlLoader = new FXMLLoader(MailClientApplication.class.getResource("mailBox-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1000, 800);
         MailBoxController mailBoxController = fxmlLoader.getController();
         mailBoxController.setUser(currentUser);
 
-        // On associe le mailBoxController au ConnexionServer pour les mails, etc.
         connexionServer.setMailBoxController(mailBoxController);
 
         Stage stage = new Stage();
@@ -77,9 +70,10 @@ public class LogController {
 
     private void showAlertUserNotFound() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Utilisateur non reconnu");
+        alert.setTitle("Unrecognized user");
         alert.setHeaderText(null);
-        alert.setContentText("L'utilisateur n'est pas connu du serveur. Veuillez vérifier votre adresse.");
+        alert.setContentText("The user is not known to the server. Please check your address.");
         alert.showAndWait();
     }
+
 }

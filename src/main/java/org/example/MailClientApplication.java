@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.example.controller.ConnexionServer;
 import org.example.controller.LogController;
 
 import java.io.IOException;
@@ -27,6 +26,4 @@ public class MailClientApplication extends Application {
         logStage.setScene(scene);
         logStage.show();
     }
-
-
 }
