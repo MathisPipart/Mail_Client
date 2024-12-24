@@ -30,8 +30,6 @@ public class MailBoxController {
     @FXML
     private TableView<Email> emailTable;
 
-    ObservableList<Email> emailList = FXCollections.observableArrayList();
-
     @FXML
     private TableColumn<Email, String> emailColumn;
 
@@ -47,109 +45,15 @@ public class MailBoxController {
     @FXML
     private ScrollPane receiverScrollPane;
 
-    private User user;
+    ObservableList<Email> emailList = FXCollections.observableArrayList();
 
+    private User user;
     private final MailBox mailBox = new MailBox();
 
     private Email currentMail;
 
     ConnexionServer connexionServer = ConnexionServer.getInstance();;
     private volatile boolean keepUpdating = true;
-
-
-    public void setUser(User user) {
-        this.user = user;
-
-        // Configurer l'affichage pour l'utilisateur
-        mailName.setText(user.getEmail());
-
-        // Récupérer les emails pour l'utilisateur depuis le serveur
-        List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
-
-        // Ajouter les emails récupérés à la MailBox de l'utilisateur
-        if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
-            user.getMailBox().getEmails().setAll(retrievedEmails); // Mise à jour complète
-        }
-
-        // Mettre à jour la table avec les emails de la MailBox
-        emailList.addAll(user.getMailBox().getEmails());
-        emailTable.setItems(emailList);
-
-
-        // Démarrer le polling pour vérifier les nouveaux emails
-        updateListLoop();
-    }
-
-    public void updateListLoop() {
-        new Thread(() -> {
-            while (keepUpdating) { // Si une gestion d'arrêt est requise, ajoute une condition pour sortir de la boucle
-                try {
-                    this.updateList();
-
-                    // Attendre 5 secondes avant de relancer la récupération
-                    Thread.sleep(5000);
-
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break; // Sortir du thread si interruption
-                }
-            }
-            }).start();
-    }
-
-    public void updateList() {
-        updateConnexionLabel();
-
-        // Récupérer les emails pour l'utilisateur depuis le serveur
-        List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
-
-        if (!connexionServer.isConnected() || retrievedEmails == null) {
-            return;
-        }
-
-        // Trier les emails par ordre décroissant de date
-        if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
-            retrievedEmails.sort((email1, email2) -> email2.getTimestamp().compareTo(email1.getTimestamp()));
-        }
-
-        // Mettre à jour la table dans l'interface utilisateur
-        Platform.runLater(() -> {
-            if (retrievedEmails != null) {
-                // Add to "emailList" items that are not already inserted in
-                retrievedEmails.forEach(e -> {
-                    if (!emailList.contains(e)) {
-                        emailList.addFirst(e);
-                    }
-                });
-
-                final List<Email> toRemove = new ArrayList<>();
-
-                emailList.forEach(e -> {
-                    if (!retrievedEmails.contains(e)) {
-                        toRemove.add(e);
-                    }
-                });
-
-                toRemove.forEach(e -> emailList.remove(e));
-            }
-        });
-    }
-
-    public void stopUpdating() {
-        keepUpdating = false; // Arrête la boucle
-    }
-
-
-    public void updateConnexionLabel(){
-        boolean isConnected = connexionServer.isConnected();
-        String newLabelState = isConnected ? "Connected" : "Not Connected";
-
-        if (!newLabelState.equals(connectedLabel.getText())) {
-            Platform.runLater(() -> {
-                connectedLabel.setText(newLabelState);
-            });
-        }
-    }
 
 
     @FXML
@@ -161,26 +65,11 @@ public class MailBoxController {
         emailTable.setPlaceholder(new Label("No email to display."));
     }
 
-    @FXML
-    public void openNewMailStage() throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(MailClientApplication.class.getResource("newMail-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 598, 488);
-
-        NewMailController controller = fxmlLoader.getController();
-        controller.setCurrentUser(user);
-        controller.setMailBoxController(this);
-
-        Stage newMailStage = new Stage();
-        newMailStage.setTitle("New Mail");
-        newMailStage.setScene(scene);
-        newMailStage.show();
-    }
-
     private void listenerOnClickListMail(){
         emailTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if(newSelection != null){
                 currentMail = newSelection;
-                // Mettre à jour le label avec le sender de l'email sélectionné
+
                 selectedSenderLabel.setText(newSelection.getSender());
                 updateReceiverTextFlow(newSelection.getReceiver());
                 selectedSubjectLabel.setText(newSelection.getSubject());
@@ -195,27 +84,6 @@ public class MailBoxController {
         });
     }
 
-    private void setVisible(){
-        fromLabel.setVisible(true);
-        toLabel.setVisible(true);
-        replyButton.setVisible(true);
-        replyAllButton.setVisible(true);
-        forwardButton.setVisible(true);
-        deleteButton.setVisible(true);
-        selectedContentTextFlow.setVisible(true);
-        receiverScrollPane.setVisible(true);
-    }
-
-    @FXML
-    private void updateReceiverTextFlow(List<String> receivers) {
-        selectedReceiverTextFlow.getChildren().clear();
-
-        for (String receiver : receivers) {
-            Text textNode = new Text(receiver + "\n");
-            selectedReceiverTextFlow.getChildren().add(textNode);
-        }
-    }
-
     private void cellsInitialisation() {
         emailTable.setRowFactory(tv -> new TableRow<Email>() {
             @Override
@@ -223,7 +91,7 @@ public class MailBoxController {
                 super.updateItem(item, empty);
 
                 if (empty || item == null) {
-                    setStyle("-fx-background-color: white;"); // Set background color for empty rows
+                    setStyle("-fx-background-color: white;");
                     setText(null);
                 } else {
                     setStyle("");
@@ -238,7 +106,7 @@ public class MailBoxController {
                 super.updateItem(item, empty);
 
                 if (empty || getTableRow() == null || getTableRow().getItem() == null) {
-                    setGraphic(null); // No content for empty cells
+                    setGraphic(null);
                     setText(null);
                 } else {
                     // Retrieve the email for the current row
@@ -258,7 +126,7 @@ public class MailBoxController {
 
 
                     Button deleteButton = new Button("Delete");
-                    deleteButton.setPrefWidth(50); // Set fixed button width
+                    deleteButton.setPrefWidth(50);
                     deleteButton.setOnAction(event -> listenerDeleteMailViaList(email));
                     enableHoverEffect(deleteButton);
 
@@ -284,28 +152,151 @@ public class MailBoxController {
         emailTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
-    private void addMail(){
-        mailBox.addEmail(new Email(1, "mathis.pipart@gmail.com", List.of("example1@mail.com"), "Sujet 1", "Contenu 1", LocalDateTime.now()));
-        mailBox.addEmail(new Email(2, "mathis.pipart@free.fr", Arrays.asList("example2@mail.com", "exampleA@mail.com", "example7@mail.com", "exampleE@mail.com"), "Sujet 2", "Contenu 2", LocalDateTime.now()));
-        mailBox.addEmail(new Email(3, "paul.zerial@edu.esiee.fr", Arrays.asList("example3@mail.com", "exampleB@mail.com", "exampleC@mail.com"), "Sujet 3", "Contenu 3", LocalDateTime.now()));
-        mailBox.addEmail(new Email(4, "alice.durand@gmail.com", List.of("example4@mail.com"), "Sujet 4", "Contenu 4", LocalDateTime.now()));
-        mailBox.addEmail(new Email(5, "julien.martin@orange.fr", Arrays.asList("example5@mail.com", "exampleD@mail.com"), "Sujet 5", "Contenu 5", LocalDateTime.now()));
-        mailBox.addEmail(new Email(6, "emma.lefevre@hotmail.com", List.of("example6@mail.com"), "Sujet 6", "Contenu 6", LocalDateTime.now()));
-        mailBox.addEmail(new Email(7, "lucas.bernard@edu.univ.fr", Arrays.asList("example7@mail.com", "exampleE@mail.com"), "Sujet 7", "Contenu 7", LocalDateTime.now()));
-        mailBox.addEmail(new Email(8, "charlotte.dubois@gmail.com", Arrays.asList("example8@mail.com", "exampleF@mail.com", "exampleG@mail.com"), "Sujet 8", "Contenu 8", LocalDateTime.now()));
-        mailBox.addEmail(new Email(9, "nicolas.perrin@yahoo.fr", List.of("example9@mail.com"), "Sujet 9", "Contenu 9", LocalDateTime.now()));
-        mailBox.addEmail(new Email(10, "lea.moreau@laposte.net", List.of("example10@mail.com"), "Sujet 10", "Contenu 10", LocalDateTime.now()));
-        mailBox.addEmail(new Email(11, "marie.dupont@gmail.com", Arrays.asList("example11@mail.com", "exampleH@mail.com"), "Sujet 11", "Contenu 11", LocalDateTime.now()));
-        mailBox.addEmail(new Email(12, "quentin.leroy@hotmail.fr", Arrays.asList("example12@mail.com", "exampleI@mail.com"), "Sujet 12", "Contenu 12", LocalDateTime.now()));
-        mailBox.addEmail(new Email(13, "sophie.giraud@edu.univ.fr", List.of("example13@mail.com"), "Sujet 13", "Contenu 13", LocalDateTime.now()));
-        mailBox.addEmail(new Email(14, "antoine.roche@orange.fr", Arrays.asList("example14@mail.com", "exampleJ@mail.com"), "Sujet 14", "Contenu 14", LocalDateTime.now()));
-        mailBox.addEmail(new Email(15, "claire.benoit@yahoo.com", Arrays.asList("example15@mail.com", "exampleK@mail.com", "exampleL@mail.com"), "Sujet 15", "Contenu 15", LocalDateTime.now()));
-        user.setMailBox(mailBox);
+    public void enableAllButton(){
+        enableHoverEffect(newMailButton);
+        enableHoverEffect(replyButton);
+        enableHoverEffect(replyAllButton);
+        enableHoverEffect(forwardButton);
+        enableHoverEffect(deleteButton);
+    }
+
+    public void enableHoverEffect(Button button) {
+        button.setOnMouseEntered(event -> button.setStyle("-fx-cursor: hand;")); // Change le curseur en main
+        button.setOnMouseExited(event -> button.setStyle("")); // Réinitialise le style
+    }
+
+
+
+    public void setUser(User user) {
+        this.user = user;
+        mailName.setText(user.getEmail());
+
+        // Retrieve emails for the user from the server
+        List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
+
+        // Add recovered emails to the user's MailBox
+        if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
+            user.getMailBox().getEmails().setAll(retrievedEmails); // Mise à jour complète
+        }
+
+        // Update table with MailBox emails
+        emailList.addAll(user.getMailBox().getEmails());
+        emailTable.setItems(emailList);
+
+
+        // Start polling to check for new emails
+        updateListLoop();
+    }
+
+    public void updateListLoop() {
+        new Thread(() -> {
+            while (keepUpdating) {
+                try {
+                    this.updateList();
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+            }).start();
+    }
+
+    public void updateList() {
+        updateConnexionLabel();
+
+        List<Email> retrievedEmails = connexionServer.retrieveEmails(user);
+
+        if (!connexionServer.isConnected() || retrievedEmails == null) {
+            return;
+        }
+
+        // Sort emails
+        if (retrievedEmails != null && !retrievedEmails.isEmpty()) {
+            retrievedEmails.sort((email1, email2) -> email2.getTimestamp().compareTo(email1.getTimestamp()));
+        }
+
+        // Update table in user interface
+        Platform.runLater(() -> {
+            if (retrievedEmails != null) {
+                // Add to "emailList" items that are not already inserted in
+                retrievedEmails.forEach(e -> {
+                    if (!emailList.contains(e)) {
+                        emailList.addFirst(e);
+                    }
+                });
+
+                final List<Email> toRemove = new ArrayList<>();
+
+                emailList.forEach(e -> {
+                    if (!retrievedEmails.contains(e)) {
+                        toRemove.add(e);
+                    }
+                });
+
+                toRemove.forEach(e -> emailList.remove(e));
+            }
+        });
+    }
+
+    public void stopUpdating() {
+        keepUpdating = false;
+    }
+
+
+
+    public void updateConnexionLabel(){
+        boolean isConnected = connexionServer.isConnected();
+        String newLabelState = isConnected ? "Connected" : "Not Connected";
+
+        if (!newLabelState.equals(connectedLabel.getText())) {
+            Platform.runLater(() -> {
+                connectedLabel.setText(newLabelState);
+            });
+        }
+    }
+
+    private void setVisible(){
+        fromLabel.setVisible(true);
+        toLabel.setVisible(true);
+        replyButton.setVisible(true);
+        replyAllButton.setVisible(true);
+        forwardButton.setVisible(true);
+        deleteButton.setVisible(true);
+        selectedContentTextFlow.setVisible(true);
+        receiverScrollPane.setVisible(true);
+    }
+
+    @FXML
+    private void updateReceiverTextFlow(List<String> receivers) {
+        selectedReceiverTextFlow.getChildren().clear();
+
+        for (String receiver : receivers) {
+            Text textNode = new Text(receiver + "\n");
+            selectedReceiverTextFlow.getChildren().add(textNode);
+        }
     }
 
     private String formatDate(LocalDateTime timestamp) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy, HH:mm:ss");
         return timestamp.format(formatter);
+    }
+
+
+
+    @FXML
+    public void openNewMailStage() throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader(MailClientApplication.class.getResource("newMail-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 598, 488);
+
+        NewMailController controller = fxmlLoader.getController();
+        controller.setCurrentUser(user);
+        controller.setMailBoxController(this);
+
+        Stage newMailStage = new Stage();
+        newMailStage.setTitle("New Mail");
+        newMailStage.setScene(scene);
+        newMailStage.show();
     }
 
     @FXML
@@ -406,16 +397,4 @@ public class MailBoxController {
         deleteMail();
     }
 
-    public void enableAllButton(){
-        enableHoverEffect(newMailButton);
-        enableHoverEffect(replyButton);
-        enableHoverEffect(replyAllButton);
-        enableHoverEffect(forwardButton);
-        enableHoverEffect(deleteButton);
-    }
-
-    public void enableHoverEffect(Button button) {
-        button.setOnMouseEntered(event -> button.setStyle("-fx-cursor: hand;")); // Change le curseur en main
-        button.setOnMouseExited(event -> button.setStyle("")); // Réinitialise le style
-    }
 }
