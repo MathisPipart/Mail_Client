@@ -15,33 +15,29 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ConnexionServer {
-    // Instance unique de Singleton
-    private static ConnexionServer instance;
-
-    MailBoxController mailBoxController;
-
-    public void setMailBoxController(MailBoxController mailBoxController) {
-        this.mailBoxController = mailBoxController;
-    }
-
-    // Variables de connexion
     private Socket socket;
     private ObjectOutputStream outStream;
     private BufferedReader inStream;
 
+    private static ConnexionServer instance;
+    MailBoxController mailBoxController;
     private boolean connected = false;
 
-    // Constructeur privé pour empêcher l'instanciation directe
+
     private ConnexionServer() {
     }
 
-    // Méthode pour récupérer l'instance unique
     public static synchronized ConnexionServer getInstance() {
         if (instance == null) {
             instance = new ConnexionServer();
         }
         return instance;
     }
+
+    public void setMailBoxController(MailBoxController mailBoxController) {
+        this.mailBoxController = mailBoxController;
+    }
+
 
     public boolean startClient(User user) {
         try {
@@ -53,29 +49,25 @@ public class ConnexionServer {
 
                 connected = true;
 
-                // Lire le message de bienvenue
                 String welcomeMessage = inStream.readLine();
                 System.out.println("Server says: " + welcomeMessage);
 
-                // Envoyer l'utilisateur
+                // Send user
                 outStream.writeObject(user);
                 outStream.flush();
 
-                // Lire la réponse concernant l'utilisateur
+                // Read the answer about the user
                 String response = inStream.readLine();
                 if (response != null) {
                     if (response.startsWith("Error:")) {
-                        // L'utilisateur n'existe pas, on ferme la connexion et on retourne false
-                        System.err.println("Erreur côté serveur : " + response);
+                        System.err.println("Server-side error : " + response);
                         closeClientConnection();
                         return false;
                     } else if (response.startsWith("User connected successfully.")) {
-                        // L'utilisateur existe, connexion établie
-                        System.out.println("L'utilisateur est connecté avec succès.");
+                        System.out.println("The user is successfully logged in.");
                         return true;
                     } else {
-                        // Réponse inattendue
-                        System.err.println("Réponse inattendue du serveur : " + response);
+                        System.err.println("Unexpected server response: " + response);
                         closeClientConnection();
                         return false;
                     }
@@ -86,11 +78,11 @@ public class ConnexionServer {
             }
             return true;
         } catch (ConnectException e) {
-            System.err.println("Erreur : Impossible de se connecter au serveur.");
+            System.err.println("Error: Unable to connect to server.");
             connected = false;
             return false;
         } catch (IOException e) {
-            System.err.println("Erreur d'E/S lors de la connexion : " + e.getMessage());
+            System.err.println("I/O Error during connection:" + e.getMessage());
             connected = false;
             return false;
         }
@@ -122,23 +114,23 @@ public class ConnexionServer {
 
         try {
             if (!isConnected()) {
-                startClient(user); // Tenter de se reconnecter
+                startClient(user);
             }
 
-            // Vérification supplémentaire avant d'envoyer des données
+            // Additional checks before sending data
             if (outStream == null || inStream == null) {
                 throw new IllegalStateException("Flux non initialisés. Connexion invalide.");
             }
 
-            // Envoyer la commande pour récupérer les emails
+            // Send order to retrieve emails
             outStream.writeObject("RETRIEVE_MAILS:" + user.getEmail());
             outStream.flush();
 
-            // Lire les emails envoyés par le serveur
+            // Read emails sent by the server
             String line;
             while ((line = inStream.readLine()) != null) {
                 if (line.equals("END_OF_MAILS")) {
-                    break; // Fin de la liste des emails
+                    break;
                 }
 
                 if (line.startsWith("Mail:")) {
@@ -154,15 +146,15 @@ public class ConnexionServer {
                 }
             }
         } catch (SocketException e) {
-            System.err.println("Connexion interrompue : " + e.getMessage());
-            connected = false; // Mettre à jour l'état de connexion
+            System.err.println("Connection interrupted : " + e.getMessage());
+            connected = false;
             return null;
         } catch (IOException e) {
-            System.err.println("Erreur d'entrée/sortie : " + e.getMessage());
+            System.err.println("Input/output error : " + e.getMessage());
             connected = false;
             return null;
         } catch (Exception e) {
-            System.err.println("Erreur inattendue : " + e.getMessage());
+            System.err.println("Unexpected error: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -178,7 +170,7 @@ public class ConnexionServer {
                 parts[1],
                 Arrays.asList(parts[2].split("\\|")),
                 parts[3],
-                parts[4].replaceAll("\\\\n", "\n"), // si vous aviez remplacé les \n côté serveur
+                parts[4].replaceAll("\\\\n", "\n"),
                 LocalDateTime.parse(parts[5])
         );
     }
@@ -217,15 +209,14 @@ public class ConnexionServer {
     public boolean checkUserExists(User currentUser, String emailToCheck) {
         try {
             if (!isConnected()) {
-                // (Re)connexion si nécessaire
                 startClient(currentUser);
             }
 
-            // Envoyer la commande de vérification
+            // Send verification command
             outStream.writeObject("CHECK_USER:" + emailToCheck);
             outStream.flush();
 
-            // Lire la réponse
+            // Read the answer
             String response = inStream.readLine();
             if (response != null) {
                 if (response.startsWith("User exists")) {
@@ -246,14 +237,13 @@ public class ConnexionServer {
     public void closeClientConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
-                // Informer le serveur de la déconnexion
+                // Inform server of disconnection
                 outStream.writeObject("DISCONNECT");
                 outStream.flush();
 
-                // Fermer la socket
                 socket.close();
                 connected = false;
-                System.out.println("Connexion fermée.");
+                System.out.println("Closed connection.");
             }
         } catch (IOException e) {
             e.printStackTrace();

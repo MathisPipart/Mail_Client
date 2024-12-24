@@ -27,21 +27,12 @@ public class NewMailController {
     private Button sendButton;
 
     private ConnexionServer connexionServer = ConnexionServer.getInstance();
-
     MailBoxController mailBoxController;
-
     User currentUser;
 
-    public Label getMailName() {
-        return mailName;
-    }
 
     public TextField getSendTo() {
         return sendTo;
-    }
-
-    public TextField getSubject() {
-        return subject;
     }
 
     public TextArea getContent() {
@@ -81,23 +72,20 @@ public class NewMailController {
 
     @FXML
     private void sendMail() {
-        // Validate fields
         if (!areFieldsValid()) {
             return;
         }
 
-        // Vérifier l'existence des destinataires
+        // Verify the existence of recipients
         String[] recipients = sendTo.getText().split("\\s*;\\s*");
         for (String recipient : recipients) {
             boolean userExists = connexionServer.checkUserExists(currentUser, recipient);
             if (!userExists) {
-                // Afficher une alerte
                 showAlert("User Not Found", "The user " + recipient + " does not exist on the server.");
-                return; // Ne pas continuer l'envoi
+                return;
             }
         }
 
-        // Créer l'objet Email
         Email email = new Email(
                 0,
                 mailName.getText(),
@@ -107,11 +95,10 @@ public class NewMailController {
                 LocalDateTime.now()
         );
 
-        // Envoyer l'email via ConnexionServer
+        // Send email via ConnexionServer
         boolean success = connexionServer.sendEmail(currentUser, email);
 
         if (success) {
-            // Fermer la fenêtre
             Stage stageNewMail = (Stage) sendTo.getScene().getWindow();
             stageNewMail.close();
         } else {
@@ -140,8 +127,6 @@ public class NewMailController {
         return Arrays.stream(emailArray)
                 .allMatch(this::isValidEmail);
     }
-
-
 
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
