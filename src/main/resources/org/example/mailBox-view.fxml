@@ -49,7 +49,7 @@
          </TableView>
       </left>
       <center>
-         <TitledPane animated="false" prefHeight="748.0" prefWidth="497.0" text="My mail" BorderPane.alignment="TOP_CENTER">
+         <TitledPane animated="false" prefHeight="767.0" prefWidth="600.0" text="My mail" BorderPane.alignment="TOP_CENTER">
             <content>
                <GridPane>
                  <columnConstraints>
