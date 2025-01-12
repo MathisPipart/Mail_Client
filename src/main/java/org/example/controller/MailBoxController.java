@@ -365,7 +365,7 @@ public class MailBoxController {
             controller.setContent(currentMail.getContent());
 
             Stage newMailStage = new Stage();
-            newMailStage.setTitle("Reply Mail");
+            newMailStage.setTitle("Forward Mail");
             newMailStage.setScene(scene);
             newMailStage.setOnShown(event -> controller.getSendTo().requestFocus());
             newMailStage.show();
